@@ -67,7 +67,7 @@ export function Dashboard({ expenses }: Props) {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">${totalSpent.toFixed(2)}</p>
+            <p className="text-2xl font-bold">₹{totalSpent.toFixed(2)}</p>
           </CardContent>
         </Card>
         <Card>
@@ -107,7 +107,7 @@ export function Dashboard({ expenses }: Props) {
                       <Cell key={i} fill={COLORS[i % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(v: number) => `$${v.toFixed(2)}`} />
+                  <Tooltip formatter={(v: number) => `₹${v.toFixed(2)}`} />
                 </PieChart>
               </ResponsiveContainer>
             )}
@@ -125,7 +125,7 @@ export function Dashboard({ expenses }: Props) {
                 <BarChart data={dailyData}>
                   <XAxis dataKey="day" tick={{ fontSize: 11 }} interval="preserveStartEnd" />
                   <YAxis tick={{ fontSize: 11 }} />
-                  <Tooltip formatter={(v: number) => `$${v.toFixed(2)}`} />
+                  <Tooltip formatter={(v: number) => `₹${v.toFixed(2)}`} />
                   <Bar dataKey="amount" fill="hsl(222, 47%, 30%)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>

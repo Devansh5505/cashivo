@@ -54,7 +54,7 @@ export function ExpenseList({ expenses, onDelete }: Props) {
               <CardContent className="flex items-center justify-between p-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-semibold">${e.amount.toFixed(2)}</span>
+                    <span className="text-lg font-semibold">₹{e.amount.toFixed(2)}</span>
                     <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
                       {e.category}
                     </span>

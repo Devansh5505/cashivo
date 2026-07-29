@@ -266,17 +266,28 @@ export default function Dashboard() {
   );
 }
 
-function StatCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: "success" | "destructive" }) {
-  const toneClass = tone === "success" ? "text-success bg-success/10" : "text-destructive bg-destructive/10";
+type Tone = "success" | "destructive" | "info" | "warning";
+
+/** Accent map: income = emerald, expense = coral, savings = blue-teal, budget = amber. */
+const TONES: Record<Tone, { badge: string; value: string }> = {
+  success: { badge: "text-success bg-success/10 ring-success/20", value: "text-success" },
+  destructive: { badge: "text-destructive bg-destructive/10 ring-destructive/20", value: "text-destructive" },
+  info: { badge: "text-info bg-info/10 ring-info/20", value: "text-info" },
+  warning: { badge: "text-warning bg-warning/10 ring-warning/20", value: "text-warning" },
+};
+
+function StatCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: Tone }) {
+  const t = TONES[tone];
   return (
-    <Card className="rounded-2xl shadow-soft">
+    <Card className="rounded-2xl shadow-soft card-hover surface-tint border-border/60">
       <CardContent className="p-5">
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">{label}</span>
-          <span className={`h-8 w-8 rounded-full flex items-center justify-center ${toneClass}`}>{icon}</span>
+          <span className={`h-8 w-8 rounded-full flex items-center justify-center ring-1 ${t.badge}`}>{icon}</span>
         </div>
-        <div className="mt-2 font-display text-2xl font-bold">{value}</div>
+        <div className={`mt-2 font-display text-2xl font-bold ${t.value}`}>{value}</div>
       </CardContent>
     </Card>
   );
 }
+

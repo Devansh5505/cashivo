@@ -205,7 +205,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl lg:col-span-2 shadow-soft">
+        <Card className="rounded-3xl lg:col-span-2 shadow-soft card-hover border-border/60">
           <CardHeader>
             <CardTitle className="text-base font-display">Spending by category</CardTitle>
           </CardHeader>
@@ -215,13 +215,25 @@ export default function Dashboard() {
             ) : (
               <ResponsiveContainer width="100%" height={240}>
                 <PieChart>
-                  <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={55} outerRadius={90} paddingAngle={2}>
+                  <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={58} outerRadius={92} paddingAngle={3} stroke="hsl(var(--card))" strokeWidth={2}>
                     {byCategory.map((c, i) => <Cell key={i} fill={c.color} />)}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ borderRadius: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }}
+                    contentStyle={{
+                      borderRadius: 14,
+                      border: "1px solid hsl(var(--border))",
+                      background: "hsl(var(--card))",
+                      color: "hsl(var(--card-foreground))",
+                      boxShadow: "var(--shadow-md)",
+                    }}
                     formatter={(v: number) => formatCurrency(v, currency)}
                   />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
                 </PieChart>
               </ResponsiveContainer>
             )}

@@ -255,9 +255,9 @@ export default function Dashboard() {
               {recent.map((t) => {
                 const cat = categories.find((c) => c.id === t.category_id);
                 return (
-                  <div key={t.id} className="flex items-center justify-between rounded-xl p-2 hover:bg-muted/50 transition-colors">
+                  <div key={t.id} className="flex items-center justify-between rounded-xl p-2 interactive hover:bg-muted/60 hover:translate-x-0.5">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: (cat?.color ?? "#64748b") + "22", color: cat?.color ?? "#64748b" }}>
+                      <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ring-1 ring-border/50" style={{ background: (cat?.color ?? "#64748b") + "22", color: cat?.color ?? "#64748b" }}>
                         <span className="text-lg font-bold">{cat?.name?.[0] ?? "?"}</span>
                       </div>
                       <div className="min-w-0">
@@ -265,9 +265,10 @@ export default function Dashboard() {
                         <div className="text-xs text-muted-foreground truncate">{format(parseISO(t.date), "MMM d")} · {t.payment_method ?? "—"}{t.note ? ` · ${t.note}` : ""}</div>
                       </div>
                     </div>
-                    <div className={`font-display font-semibold ${t.type === "income" ? "text-success" : "text-foreground"}`}>
+                    <div className={`font-display font-semibold tabular-nums ${t.type === "income" ? "text-success" : "text-destructive"}`}>
                       {t.type === "income" ? "+" : "-"}{formatCurrency(Number(t.amount), currency).replace("-", "")}
                     </div>
+
                   </div>
                 );
               })}

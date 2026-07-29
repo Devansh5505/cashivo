@@ -113,6 +113,28 @@ export default function Auth() {
     }
   };
 
+  /** Send a password-reset email; the link lands on /reset-password on this same origin. */
+  const sendReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const mail = resetEmail.trim();
+    if (!mail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) return toast.error("Please enter a valid email address.");
+    setResetBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(mail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) return toast.error(friendly(error.message));
+      // Supabase does not reveal whether the address exists, so keep the copy neutral.
+      toast.success("Password reset email sent — check your inbox (and spam folder).");
+      setForgotOpen(false);
+      setResetEmail("");
+    } catch {
+      toast.error("Network error — please check your connection and try again.");
+    } finally {
+      setResetBusy(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
       <motion.div

@@ -233,16 +233,11 @@ export default function Dashboard() {
             )}
           </CardContent>
         </Card>
-
-                </PieChart>
-              </ResponsiveContainer>
-            )}
-          </CardContent>
-        </Card>
       </div>
 
       {/* Recent */}
-      <Card className="rounded-3xl shadow-soft">
+      <Card className="rounded-3xl shadow-soft card-hover border-border/60">
+
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base font-display">Recent transactions</CardTitle>
           <Button variant="ghost" size="sm" onClick={() => navigate("/transactions")}>View all</Button>

@@ -23,39 +23,89 @@ export default function Auth() {
   if (loading) return null;
   if (user) return <Navigate to="/" replace />;
 
+  /** Minimal password rules: required, 8-128 chars. No composition requirements. */
+  const validate = (isSignUp: boolean) => {
+    const mail = email.trim();
+    if (!mail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) return "Please enter a valid email address.";
+    if (!password) return "Password is required.";
+    if (password.length < 8) return "Password must be at least 8 characters.";
+    if (password.length > 128) return "Password must be 128 characters or fewer.";
+    if (isSignUp && !name.trim()) return "Please enter your name.";
+    return null;
+  };
+
+  /** Map raw auth errors to friendly, actionable messages. */
+  const friendly = (message: string) => {
+    const m = message.toLowerCase();
+    if (m.includes("invalid login credentials")) return "Incorrect email or password. If you just signed up, make sure you're using the same password.";
+    if (m.includes("email not confirmed")) return "Please verify your email address before signing in — check your inbox.";
+    if (m.includes("already registered") || m.includes("already been registered") || m.includes("user already"))
+      return "That email is already registered. Try signing in instead.";
+    if (m.includes("invalid email") || m.includes("unable to validate email")) return "Please enter a valid email address.";
+    if (m.includes("password should be")) return "Password must be at least 8 characters.";
+    if (m.includes("user not found")) return "We couldn't find an account with that email.";
+    if (m.includes("failed to fetch") || m.includes("network")) return "Network error — please check your connection and try again.";
+    if (m.includes("rate limit") || m.includes("too many")) return "Too many attempts. Please wait a moment and try again.";
+    return message;
+  };
+
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    const invalid = validate(false);
+    if (invalid) return toast.error(invalid);
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Welcome back!");
-    navigate("/", { replace: true });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      if (error) return toast.error(friendly(error.message));
+      toast.success("Welcome back!");
+      navigate("/", { replace: true });
+    } catch {
+      toast.error("Network error — please check your connection and try again.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    const invalid = validate(true);
+    if (invalid) return toast.error(invalid);
     setBusy(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: window.location.origin,
-        data: { full_name: name },
-      },
-    });
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Account created — you're in!");
-    navigate("/", { replace: true });
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+          data: { full_name: name.trim() },
+        },
+      });
+      if (error) return toast.error(friendly(error.message));
+      // Session present => verification disabled, user is signed in immediately.
+      if (data.session) {
+        toast.success("Account created — you're in!");
+        navigate("/", { replace: true });
+      } else {
+        toast.success("Account created. Please verify your email, then sign in.");
+      }
+    } catch {
+      toast.error("Network error — please check your connection and try again.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const google = async () => {
     setBusy(true);
-    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    setBusy(false);
-    if (res.error) return toast.error(res.error.message || "Google sign-in failed");
-    if (!res.redirected) navigate("/", { replace: true });
+    try {
+      const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+      if (res.error) return toast.error(friendly(res.error.message || "Google sign-in failed"));
+      if (!res.redirected) navigate("/", { replace: true });
+    } catch {
+      toast.error("Network error — please check your connection and try again.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -125,7 +175,7 @@ export default function Auth() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="pw-up">Password</Label>
-                    <Input id="pw-up" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl" />
+                    <Input id="pw-up" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl" />
                   </div>
                   <Button type="submit" className="w-full rounded-xl h-11" disabled={busy}>Create account</Button>
                 </form>

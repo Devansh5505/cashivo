@@ -134,8 +134,10 @@ export default function Dashboard() {
       </div>
 
       {/* Balance Hero */}
-      <Card className="rounded-3xl overflow-hidden border-none shadow-elegant bg-gradient-hero text-primary-foreground">
-        <CardContent className="p-6 md:p-8">
+      <Card className="relative rounded-3xl overflow-hidden border-none shadow-elegant bg-gradient-hero text-primary-foreground">
+        {/* Soft radial highlight for depth */}
+        <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-primary-foreground/10 blur-2xl" />
+        <CardContent className="relative p-6 md:p-8">
           <div className="flex items-center gap-2 text-sm opacity-80">
             <Wallet className="h-4 w-4" /> Current balance
           </div>
@@ -146,14 +148,14 @@ export default function Dashboard() {
             {/* Expense: coral/red accent from theme tokens for clear contrast on the hero gradient */}
             <Button
               onClick={() => openAdd("expense")}
-              className="rounded-xl gap-2 bg-destructive text-destructive-foreground shadow-soft hover:bg-destructive/90 focus-visible:ring-2 focus-visible:ring-destructive-foreground/70"
+              className="rounded-xl gap-2 press bg-destructive text-destructive-foreground shadow-soft hover:bg-destructive/90 focus-visible:ring-2 focus-visible:ring-destructive-foreground/70"
             >
               <Plus className="h-4 w-4" /> Add Expense
             </Button>
             {/* Income: emerald/glass treatment consistent with the brand */}
             <Button
               onClick={() => openAdd("income")}
-              className="rounded-xl gap-2 bg-primary-foreground/15 text-primary-foreground border border-primary-foreground/25 backdrop-blur shadow-soft hover:bg-primary-foreground/25 focus-visible:ring-2 focus-visible:ring-primary-foreground/70"
+              className="rounded-xl gap-2 press bg-primary-foreground/15 text-primary-foreground border border-primary-foreground/25 backdrop-blur shadow-soft hover:bg-primary-foreground/25 focus-visible:ring-2 focus-visible:ring-primary-foreground/70"
             >
               <Plus className="h-4 w-4" /> Add Income
             </Button>
@@ -165,8 +167,9 @@ export default function Dashboard() {
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard icon={<ArrowDownRight className="h-4 w-4" />} label="Income this month" value={formatCurrency(stats.income, currency)} tone="success" />
         <StatCard icon={<ArrowUpRight className="h-4 w-4" />} label="Expenses this month" value={formatCurrency(stats.expense, currency)} tone="destructive" />
-        <StatCard icon={<PiggyBank className="h-4 w-4" />} label="Savings this month" value={formatCurrency(stats.savings, currency)} tone={stats.savings >= 0 ? "success" : "destructive"} />
+        <StatCard icon={<PiggyBank className="h-4 w-4" />} label="Savings this month" value={formatCurrency(stats.savings, currency)} tone={stats.savings >= 0 ? "info" : "destructive"} />
       </div>
+
 
       {/* Charts */}
       <div className="grid gap-6 lg:grid-cols-5">

@@ -184,10 +184,20 @@ export default function Auth() {
                     <Input id="email-in" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-xl" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="pw-in">Password</Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="pw-in">Password</Label>
+                      <button
+                        type="button"
+                        onClick={() => { setResetEmail(email); setForgotOpen(true); }}
+                        className="text-xs font-medium text-primary hover:underline underline-offset-4 transition-colors"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
                     <Input id="pw-in" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl" />
                   </div>
-                  <Button type="submit" className="w-full rounded-xl h-11" disabled={busy}>Sign in</Button>
+                  <Button type="submit" className="w-full rounded-xl h-11 press" disabled={busy}>Sign in</Button>
+
                 </form>
               </TabsContent>
               <TabsContent value="signup" className="mt-4">

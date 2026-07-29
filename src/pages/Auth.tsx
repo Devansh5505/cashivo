@@ -221,6 +221,39 @@ export default function Auth() {
           </CardContent>
         </Card>
       </motion.div>
+
+      <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
+        <DialogContent className="rounded-3xl sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display">Reset your password</DialogTitle>
+            <DialogDescription>
+              Enter your registered email and we'll send you a secure link to set a new password.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={sendReset} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="reset-email">Email</Label>
+              <Input
+                id="reset-email"
+                type="email"
+                required
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                className="rounded-xl"
+                placeholder="you@example.com"
+              />
+            </div>
+            <DialogFooter className="gap-2 sm:gap-2">
+              <Button type="button" variant="outline" className="rounded-xl press" onClick={() => setForgotOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" className="rounded-xl press" disabled={resetBusy}>
+                {resetBusy ? "Sending…" : "Send reset link"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

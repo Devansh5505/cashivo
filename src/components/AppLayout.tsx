@@ -1,4 +1,5 @@
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, Navigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { BottomNav } from "./BottomNav";
@@ -7,6 +8,7 @@ import { UserMenu } from "./UserMenu";
 import { Logo } from "./Logo";
 import { useAuthUser } from "@/hooks/useAuthUser";
 import { Skeleton } from "@/components/ui/skeleton";
+
 
 export default function AppLayout() {
   const { user, loading } = useAuthUser();

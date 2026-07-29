@@ -134,8 +134,10 @@ export default function Dashboard() {
       </div>
 
       {/* Balance Hero */}
-      <Card className="rounded-3xl overflow-hidden border-none shadow-elegant bg-gradient-hero text-primary-foreground">
-        <CardContent className="p-6 md:p-8">
+      <Card className="relative rounded-3xl overflow-hidden border-none shadow-elegant bg-gradient-hero text-primary-foreground">
+        {/* Soft radial highlight for depth */}
+        <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-primary-foreground/10 blur-2xl" />
+        <CardContent className="relative p-6 md:p-8">
           <div className="flex items-center gap-2 text-sm opacity-80">
             <Wallet className="h-4 w-4" /> Current balance
           </div>
@@ -146,14 +148,14 @@ export default function Dashboard() {
             {/* Expense: coral/red accent from theme tokens for clear contrast on the hero gradient */}
             <Button
               onClick={() => openAdd("expense")}
-              className="rounded-xl gap-2 bg-destructive text-destructive-foreground shadow-soft hover:bg-destructive/90 focus-visible:ring-2 focus-visible:ring-destructive-foreground/70"
+              className="rounded-xl gap-2 press bg-destructive text-destructive-foreground shadow-soft hover:bg-destructive/90 focus-visible:ring-2 focus-visible:ring-destructive-foreground/70"
             >
               <Plus className="h-4 w-4" /> Add Expense
             </Button>
             {/* Income: emerald/glass treatment consistent with the brand */}
             <Button
               onClick={() => openAdd("income")}
-              className="rounded-xl gap-2 bg-primary-foreground/15 text-primary-foreground border border-primary-foreground/25 backdrop-blur shadow-soft hover:bg-primary-foreground/25 focus-visible:ring-2 focus-visible:ring-primary-foreground/70"
+              className="rounded-xl gap-2 press bg-primary-foreground/15 text-primary-foreground border border-primary-foreground/25 backdrop-blur shadow-soft hover:bg-primary-foreground/25 focus-visible:ring-2 focus-visible:ring-primary-foreground/70"
             >
               <Plus className="h-4 w-4" /> Add Income
             </Button>
@@ -165,12 +167,13 @@ export default function Dashboard() {
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard icon={<ArrowDownRight className="h-4 w-4" />} label="Income this month" value={formatCurrency(stats.income, currency)} tone="success" />
         <StatCard icon={<ArrowUpRight className="h-4 w-4" />} label="Expenses this month" value={formatCurrency(stats.expense, currency)} tone="destructive" />
-        <StatCard icon={<PiggyBank className="h-4 w-4" />} label="Savings this month" value={formatCurrency(stats.savings, currency)} tone={stats.savings >= 0 ? "success" : "destructive"} />
+        <StatCard icon={<PiggyBank className="h-4 w-4" />} label="Savings this month" value={formatCurrency(stats.savings, currency)} tone={stats.savings >= 0 ? "info" : "destructive"} />
       </div>
+
 
       {/* Charts */}
       <div className="grid gap-6 lg:grid-cols-5">
-        <Card className="rounded-3xl lg:col-span-3 shadow-soft">
+        <Card className="rounded-3xl lg:col-span-3 shadow-soft card-hover border-border/60">
           <CardHeader>
             <CardTitle className="text-base font-display flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" /> Monthly cash flow
@@ -179,22 +182,30 @@ export default function Dashboard() {
           <CardContent>
             <ResponsiveContainer width="100%" height={240}>
               <LineChart data={cashFlow} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="4 4" stroke="hsl(var(--border))" vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} dy={6} />
+                <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={64} />
                 <Tooltip
-                  contentStyle={{ borderRadius: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }}
+                  cursor={{ stroke: "hsl(var(--border))", strokeWidth: 1 }}
+                  contentStyle={{
+                    borderRadius: 14,
+                    border: "1px solid hsl(var(--border))",
+                    background: "hsl(var(--card))",
+                    color: "hsl(var(--card-foreground))",
+                    boxShadow: "var(--shadow-md)",
+                  }}
                   formatter={(v: number) => formatCurrency(v, currency)}
                 />
-                <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Line type="monotone" dataKey="income" stroke="hsl(var(--success))" strokeWidth={2.5} dot={false} />
-                <Line type="monotone" dataKey="expense" stroke="hsl(var(--destructive))" strokeWidth={2.5} dot={false} />
+                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} iconType="circle" />
+                <Line type="monotone" dataKey="income" stroke="hsl(var(--success))" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />
+                <Line type="monotone" dataKey="expense" stroke="hsl(var(--destructive))" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />
+
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl lg:col-span-2 shadow-soft">
+        <Card className="rounded-3xl lg:col-span-2 shadow-soft card-hover border-border/60">
           <CardHeader>
             <CardTitle className="text-base font-display">Spending by category</CardTitle>
           </CardHeader>
@@ -204,11 +215,17 @@ export default function Dashboard() {
             ) : (
               <ResponsiveContainer width="100%" height={240}>
                 <PieChart>
-                  <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={55} outerRadius={90} paddingAngle={2}>
+                  <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={58} outerRadius={92} paddingAngle={3} stroke="hsl(var(--card))" strokeWidth={2}>
                     {byCategory.map((c, i) => <Cell key={i} fill={c.color} />)}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ borderRadius: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }}
+                    contentStyle={{
+                      borderRadius: 14,
+                      border: "1px solid hsl(var(--border))",
+                      background: "hsl(var(--card))",
+                      color: "hsl(var(--card-foreground))",
+                      boxShadow: "var(--shadow-md)",
+                    }}
                     formatter={(v: number) => formatCurrency(v, currency)}
                   />
                 </PieChart>
@@ -219,7 +236,8 @@ export default function Dashboard() {
       </div>
 
       {/* Recent */}
-      <Card className="rounded-3xl shadow-soft">
+      <Card className="rounded-3xl shadow-soft card-hover border-border/60">
+
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base font-display">Recent transactions</CardTitle>
           <Button variant="ghost" size="sm" onClick={() => navigate("/transactions")}>View all</Button>
@@ -237,9 +255,9 @@ export default function Dashboard() {
               {recent.map((t) => {
                 const cat = categories.find((c) => c.id === t.category_id);
                 return (
-                  <div key={t.id} className="flex items-center justify-between rounded-xl p-2 hover:bg-muted/50 transition-colors">
+                  <div key={t.id} className="flex items-center justify-between rounded-xl p-2 interactive hover:bg-muted/60 hover:translate-x-0.5">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: (cat?.color ?? "#64748b") + "22", color: cat?.color ?? "#64748b" }}>
+                      <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ring-1 ring-border/50" style={{ background: (cat?.color ?? "#64748b") + "22", color: cat?.color ?? "#64748b" }}>
                         <span className="text-lg font-bold">{cat?.name?.[0] ?? "?"}</span>
                       </div>
                       <div className="min-w-0">
@@ -247,9 +265,10 @@ export default function Dashboard() {
                         <div className="text-xs text-muted-foreground truncate">{format(parseISO(t.date), "MMM d")} · {t.payment_method ?? "—"}{t.note ? ` · ${t.note}` : ""}</div>
                       </div>
                     </div>
-                    <div className={`font-display font-semibold ${t.type === "income" ? "text-success" : "text-foreground"}`}>
+                    <div className={`font-display font-semibold tabular-nums ${t.type === "income" ? "text-success" : "text-destructive"}`}>
                       {t.type === "income" ? "+" : "-"}{formatCurrency(Number(t.amount), currency).replace("-", "")}
                     </div>
+
                   </div>
                 );
               })}
@@ -263,17 +282,28 @@ export default function Dashboard() {
   );
 }
 
-function StatCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: "success" | "destructive" }) {
-  const toneClass = tone === "success" ? "text-success bg-success/10" : "text-destructive bg-destructive/10";
+type Tone = "success" | "destructive" | "info" | "warning";
+
+/** Accent map: income = emerald, expense = coral, savings = blue-teal, budget = amber. */
+const TONES: Record<Tone, { badge: string; value: string }> = {
+  success: { badge: "text-success bg-success/10 ring-success/20", value: "text-success" },
+  destructive: { badge: "text-destructive bg-destructive/10 ring-destructive/20", value: "text-destructive" },
+  info: { badge: "text-info bg-info/10 ring-info/20", value: "text-info" },
+  warning: { badge: "text-warning bg-warning/10 ring-warning/20", value: "text-warning" },
+};
+
+function StatCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: Tone }) {
+  const t = TONES[tone];
   return (
-    <Card className="rounded-2xl shadow-soft">
+    <Card className="rounded-2xl shadow-soft card-hover surface-tint border-border/60">
       <CardContent className="p-5">
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">{label}</span>
-          <span className={`h-8 w-8 rounded-full flex items-center justify-center ${toneClass}`}>{icon}</span>
+          <span className={`h-8 w-8 rounded-full flex items-center justify-center ring-1 ${t.badge}`}>{icon}</span>
         </div>
-        <div className="mt-2 font-display text-2xl font-bold">{value}</div>
+        <div className={`mt-2 font-display text-2xl font-bold ${t.value}`}>{value}</div>
       </CardContent>
     </Card>
   );
 }
+

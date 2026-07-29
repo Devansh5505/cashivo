@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -19,6 +20,10 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetBusy, setResetBusy] = useState(false);
+
 
   if (loading) return null;
   if (user) return <Navigate to="/" replace />;
@@ -108,6 +113,28 @@ export default function Auth() {
     }
   };
 
+  /** Send a password-reset email; the link lands on /reset-password on this same origin. */
+  const sendReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const mail = resetEmail.trim();
+    if (!mail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) return toast.error("Please enter a valid email address.");
+    setResetBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(mail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) return toast.error(friendly(error.message));
+      // Supabase does not reveal whether the address exists, so keep the copy neutral.
+      toast.success("Password reset email sent — check your inbox (and spam folder).");
+      setForgotOpen(false);
+      setResetEmail("");
+    } catch {
+      toast.error("Network error — please check your connection and try again.");
+    } finally {
+      setResetBusy(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
       <motion.div
@@ -157,10 +184,20 @@ export default function Auth() {
                     <Input id="email-in" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-xl" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="pw-in">Password</Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="pw-in">Password</Label>
+                      <button
+                        type="button"
+                        onClick={() => { setResetEmail(email); setForgotOpen(true); }}
+                        className="text-xs font-medium text-primary hover:underline underline-offset-4 transition-colors"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
                     <Input id="pw-in" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl" />
                   </div>
-                  <Button type="submit" className="w-full rounded-xl h-11" disabled={busy}>Sign in</Button>
+                  <Button type="submit" className="w-full rounded-xl h-11 press" disabled={busy}>Sign in</Button>
+
                 </form>
               </TabsContent>
               <TabsContent value="signup" className="mt-4">
@@ -184,6 +221,39 @@ export default function Auth() {
           </CardContent>
         </Card>
       </motion.div>
+
+      <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
+        <DialogContent className="rounded-3xl sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display">Reset your password</DialogTitle>
+            <DialogDescription>
+              Enter your registered email and we'll send you a secure link to set a new password.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={sendReset} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="reset-email">Email</Label>
+              <Input
+                id="reset-email"
+                type="email"
+                required
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                className="rounded-xl"
+                placeholder="you@example.com"
+              />
+            </div>
+            <DialogFooter className="gap-2 sm:gap-2">
+              <Button type="button" variant="outline" className="rounded-xl press" onClick={() => setForgotOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" className="rounded-xl press" disabled={resetBusy}>
+                {resetBusy ? "Sending…" : "Send reset link"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

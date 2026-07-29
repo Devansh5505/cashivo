@@ -143,10 +143,18 @@ export default function Dashboard() {
             {formatCurrency(stats.balance, currency)}
           </div>
           <div className="mt-6 flex flex-wrap gap-2">
-            <Button onClick={() => openAdd("expense")} variant="secondary" className="rounded-xl gap-2 bg-white/95 text-foreground hover:bg-white">
+            {/* Expense: coral/red accent from theme tokens for clear contrast on the hero gradient */}
+            <Button
+              onClick={() => openAdd("expense")}
+              className="rounded-xl gap-2 bg-destructive text-destructive-foreground shadow-soft hover:bg-destructive/90 focus-visible:ring-2 focus-visible:ring-destructive-foreground/70"
+            >
               <Plus className="h-4 w-4" /> Add Expense
             </Button>
-            <Button onClick={() => openAdd("income")} variant="secondary" className="rounded-xl gap-2 bg-white/15 text-primary-foreground border border-white/20 backdrop-blur hover:bg-white/25">
+            {/* Income: emerald/glass treatment consistent with the brand */}
+            <Button
+              onClick={() => openAdd("income")}
+              className="rounded-xl gap-2 bg-primary-foreground/15 text-primary-foreground border border-primary-foreground/25 backdrop-blur shadow-soft hover:bg-primary-foreground/25 focus-visible:ring-2 focus-visible:ring-primary-foreground/70"
+            >
               <Plus className="h-4 w-4" /> Add Income
             </Button>
           </div>

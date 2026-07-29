@@ -173,7 +173,7 @@ export default function Dashboard() {
 
       {/* Charts */}
       <div className="grid gap-6 lg:grid-cols-5">
-        <Card className="rounded-3xl lg:col-span-3 shadow-soft">
+        <Card className="rounded-3xl lg:col-span-3 shadow-soft card-hover border-border/60">
           <CardHeader>
             <CardTitle className="text-base font-display flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" /> Monthly cash flow
@@ -182,16 +182,24 @@ export default function Dashboard() {
           <CardContent>
             <ResponsiveContainer width="100%" height={240}>
               <LineChart data={cashFlow} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="4 4" stroke="hsl(var(--border))" vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} dy={6} />
+                <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={64} />
                 <Tooltip
-                  contentStyle={{ borderRadius: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }}
+                  cursor={{ stroke: "hsl(var(--border))", strokeWidth: 1 }}
+                  contentStyle={{
+                    borderRadius: 14,
+                    border: "1px solid hsl(var(--border))",
+                    background: "hsl(var(--card))",
+                    color: "hsl(var(--card-foreground))",
+                    boxShadow: "var(--shadow-md)",
+                  }}
                   formatter={(v: number) => formatCurrency(v, currency)}
                 />
-                <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Line type="monotone" dataKey="income" stroke="hsl(var(--success))" strokeWidth={2.5} dot={false} />
-                <Line type="monotone" dataKey="expense" stroke="hsl(var(--destructive))" strokeWidth={2.5} dot={false} />
+                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} iconType="circle" />
+                <Line type="monotone" dataKey="income" stroke="hsl(var(--success))" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />
+                <Line type="monotone" dataKey="expense" stroke="hsl(var(--destructive))" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />
+
               </LineChart>
             </ResponsiveContainer>
           </CardContent>

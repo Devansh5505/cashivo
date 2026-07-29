@@ -12,6 +12,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AppLayout() {
   const { user, loading } = useAuthUser();
+  const location = useLocation();
+
 
   if (loading) {
     return (

@@ -10,6 +10,7 @@ import { useAuthUser } from "@/hooks/useAuthUser";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
+import { errorMessage } from "@/lib/errors";
 import { toast } from "sonner";
 
 const CURRENCIES = [
@@ -42,9 +43,9 @@ export default function Settings() {
   const save = async () => {
     try {
       await update.mutateAsync({ display_name: name.trim() || null, currency });
-      toast.success("Saved");
-    } catch (e: any) {
-      toast.error(e.message);
+      toast.success("Settings saved");
+    } catch (e) {
+      toast.error(errorMessage(e, "Couldn't save your settings."));
     }
   };
 
@@ -69,7 +70,7 @@ export default function Settings() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="display">Display name</Label>
-            <Input id="display" value={name} onChange={(e) => setName(e.target.value)} className="rounded-xl" placeholder="Your name" />
+            <Input id="display" value={name} onChange={(e) => setName(e.target.value)} className="rounded-xl" placeholder="Your name" maxLength={60} />
           </div>
           <div className="space-y-2">
             <Label>Currency</Label>
@@ -80,14 +81,14 @@ export default function Settings() {
               </SelectContent>
             </Select>
           </div>
-          <Button onClick={save} disabled={update.isPending} className="rounded-xl">Save changes</Button>
+          <Button onClick={save} disabled={update.isPending} className="rounded-xl press">{update.isPending ? "Saving…" : "Save changes"}</Button>
         </CardContent>
       </Card>
 
       <Card className="rounded-2xl shadow-soft">
         <CardHeader><CardTitle className="text-base font-display">Account</CardTitle></CardHeader>
         <CardContent>
-          <Button variant="outline" onClick={signOut} className="rounded-xl gap-2 text-destructive">
+          <Button variant="outline" onClick={signOut} className="rounded-xl gap-2 text-destructive press">
             <LogOut className="h-4 w-4" /> Sign out
           </Button>
         </CardContent>

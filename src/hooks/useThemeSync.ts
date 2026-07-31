@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/ThemeProvider";
 import { useProfile } from "@/hooks/useProfile";
 
 /**

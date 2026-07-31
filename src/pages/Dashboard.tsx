@@ -80,6 +80,9 @@ export default function Dashboard() {
     return buckets;
   }, [transactions]);
 
+  /** O(1) category lookups instead of a linear scan per row. */
+  const categoryById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
+
   const byCategory = useMemo(() => {
     const inMonth = transactions.filter(
       (t) => t.type === "expense" && isWithinInterval(parseISO(t.date), { start: monthStart, end: monthEnd })
@@ -95,10 +98,8 @@ export default function Dashboard() {
     return Array.from(map.values()).sort((a, b) => b.value - a.value);
   }, [transactions, categoryById, monthStart.getTime(), monthEnd.getTime()]);
 
-  /** O(1) category lookups instead of a linear scan per row. */
-  const categoryById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
-
   const recent = transactions.slice(0, 5);
+
 
   const openAdd = (type: "income" | "expense") => {
     setDlgType(type);

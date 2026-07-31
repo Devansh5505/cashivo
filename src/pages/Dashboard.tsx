@@ -21,7 +21,7 @@ import { ArrowDownRight, ArrowUpRight, Plus, TrendingUp, Wallet, PiggyBank } fro
 import { useTransactions } from "@/hooks/useTransactions";
 import { useCategories } from "@/hooks/useCategories";
 import { useProfile } from "@/hooks/useProfile";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, formatCompact } from "@/lib/format";
 import { TransactionDialog } from "@/components/TransactionDialog";
 import {
   startOfMonth,
@@ -86,14 +86,17 @@ export default function Dashboard() {
     );
     const map = new Map<string, { value: number; color: string; name: string }>();
     inMonth.forEach((t) => {
-      const cat = categories.find((c) => c.id === t.category_id);
+      const cat = categoryById.get(t.category_id ?? "");
       const name = cat?.name ?? "Uncategorized";
       const color = cat?.color ?? "#64748b";
       const prev = map.get(name);
       map.set(name, { name, color, value: (prev?.value ?? 0) + Number(t.amount) });
     });
     return Array.from(map.values()).sort((a, b) => b.value - a.value);
-  }, [transactions, categories, monthStart.getTime(), monthEnd.getTime()]);
+  }, [transactions, categoryById, monthStart.getTime(), monthEnd.getTime()]);
+
+  /** O(1) category lookups instead of a linear scan per row. */
+  const categoryById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
 
   const recent = transactions.slice(0, 5);
 
@@ -134,9 +137,9 @@ export default function Dashboard() {
       </div>
 
       {/* Balance Hero */}
-      <Card className="relative rounded-3xl overflow-hidden border-none shadow-elegant bg-gradient-hero text-primary-foreground">
+      <Card className="relative rounded-3xl overflow-hidden border-none shadow-elegant bg-gradient-hero text-hero">
         {/* Soft radial highlight for depth */}
-        <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-primary-foreground/10 blur-2xl" />
+        <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-hero-soft blur-2xl" />
         <CardContent className="relative p-6 md:p-8">
           <div className="flex items-center gap-2 text-sm opacity-80">
             <Wallet className="h-4 w-4" /> Current balance
@@ -148,14 +151,14 @@ export default function Dashboard() {
             {/* Expense: coral/red accent from theme tokens for clear contrast on the hero gradient */}
             <Button
               onClick={() => openAdd("expense")}
-              className="rounded-xl gap-2 press bg-destructive text-destructive-foreground shadow-soft hover:bg-destructive/90 focus-visible:ring-2 focus-visible:ring-destructive-foreground/70"
+              className="rounded-xl gap-2 press bg-destructive text-destructive-foreground shadow-soft hover:bg-destructive/90 focus-visible:ring-2 focus-visible:ring-white/80"
             >
               <Plus className="h-4 w-4" /> Add Expense
             </Button>
             {/* Income: emerald/glass treatment consistent with the brand */}
             <Button
               onClick={() => openAdd("income")}
-              className="rounded-xl gap-2 press bg-primary-foreground/15 text-primary-foreground border border-primary-foreground/25 backdrop-blur shadow-soft hover:bg-primary-foreground/25 focus-visible:ring-2 focus-visible:ring-primary-foreground/70"
+              className="rounded-xl gap-2 press bg-hero-soft text-hero border border-hero-soft backdrop-blur shadow-soft hover:brightness-125 focus-visible:ring-2 focus-visible:ring-white/70"
             >
               <Plus className="h-4 w-4" /> Add Income
             </Button>
@@ -165,8 +168,8 @@ export default function Dashboard() {
 
       {/* Stat cards */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard icon={<ArrowDownRight className="h-4 w-4" />} label="Income this month" value={formatCurrency(stats.income, currency)} tone="success" />
-        <StatCard icon={<ArrowUpRight className="h-4 w-4" />} label="Expenses this month" value={formatCurrency(stats.expense, currency)} tone="destructive" />
+        <StatCard icon={<ArrowUpRight className="h-4 w-4" />} label="Income this month" value={formatCurrency(stats.income, currency)} tone="success" />
+        <StatCard icon={<ArrowDownRight className="h-4 w-4" />} label="Expenses this month" value={formatCurrency(stats.expense, currency)} tone="destructive" />
         <StatCard icon={<PiggyBank className="h-4 w-4" />} label="Savings this month" value={formatCurrency(stats.savings, currency)} tone={stats.savings >= 0 ? "info" : "destructive"} />
       </div>
 
@@ -184,7 +187,7 @@ export default function Dashboard() {
               <LineChart data={cashFlow} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="4 4" stroke="hsl(var(--border))" vertical={false} />
                 <XAxis dataKey="month" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} dy={6} />
-                <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={64} />
+                <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={56} tickFormatter={(v: number) => formatCompact(v, currency)} />
                 <Tooltip
                   cursor={{ stroke: "hsl(var(--border))", strokeWidth: 1 }}
                   contentStyle={{
@@ -253,7 +256,7 @@ export default function Dashboard() {
           ) : (
             <div className="space-y-2">
               {recent.map((t) => {
-                const cat = categories.find((c) => c.id === t.category_id);
+                const cat = categoryById.get(t.category_id ?? "");
                 return (
                   <div key={t.id} className="flex items-center justify-between rounded-xl p-2 interactive hover:bg-muted/60 hover:translate-x-0.5">
                     <div className="flex items-center gap-3 min-w-0">

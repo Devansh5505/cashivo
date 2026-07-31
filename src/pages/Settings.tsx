@@ -44,7 +44,7 @@ export default function Settings() {
   }, [profile]);
 
   /** Apply the theme instantly, persist it with the rest of the settings. */
-  const onThemeChange = (value: string) => setTheme(value);
+  const onThemeChange = (value: string) => setTheme(value as Theme);
 
   const save = async () => {
     try {

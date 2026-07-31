@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuthUser } from "@/hooks/useAuthUser";
@@ -16,6 +16,10 @@ import { motion } from "framer-motion";
 export default function Auth() {
   const { user, loading } = useAuthUser();
   const navigate = useNavigate();
+  const location = useLocation();
+  /** Where the guard sent the user from, so we can return them after sign-in. */
+  const from = (location.state as { from?: string } | null)?.from;
+  const dest = from && from.startsWith("/") && !from.startsWith("//") && from !== "/auth" ? from : "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -26,7 +30,7 @@ export default function Auth() {
 
 
   if (loading) return null;
-  if (user) return <Navigate to="/" replace />;
+  if (user) return <Navigate to={dest} replace />;
 
   /** Minimal password rules: required, 8-128 chars. No composition requirements. */
   const validate = (isSignUp: boolean) => {
@@ -63,7 +67,7 @@ export default function Auth() {
       const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (error) return toast.error(friendly(error.message));
       toast.success("Welcome back!");
-      navigate("/", { replace: true });
+      navigate(dest, { replace: true });
     } catch {
       toast.error("Network error — please check your connection and try again.");
     } finally {
@@ -89,7 +93,7 @@ export default function Auth() {
       // Session present => verification disabled, user is signed in immediately.
       if (data.session) {
         toast.success("Account created — you're in!");
-        navigate("/", { replace: true });
+        navigate(dest, { replace: true });
       } else {
         toast.success("Account created. Please verify your email, then sign in.");
       }
@@ -105,7 +109,7 @@ export default function Auth() {
     try {
       const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
       if (res.error) return toast.error(friendly(res.error.message || "Google sign-in failed"));
-      if (!res.redirected) navigate("/", { replace: true });
+      if (!res.redirected) navigate(dest, { replace: true });
     } catch {
       toast.error("Network error — please check your connection and try again.");
     } finally {

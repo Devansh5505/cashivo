@@ -10,6 +10,7 @@ import { useAuthUser } from "@/hooks/useAuthUser";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
+import { useTheme } from "next-themes";
 import { errorMessage } from "@/lib/errors";
 import { toast } from "sonner";
 
@@ -30,6 +31,8 @@ export default function Settings() {
   const update = useUpdateProfile();
   const navigate = useNavigate();
 
+  const { theme, setTheme } = useTheme();
+
   const [name, setName] = useState("");
   const [currency, setCurrency] = useState("INR");
 
@@ -40,9 +43,12 @@ export default function Settings() {
     }
   }, [profile]);
 
+  /** Apply the theme instantly, persist it with the rest of the settings. */
+  const onThemeChange = (value: string) => setTheme(value);
+
   const save = async () => {
     try {
-      await update.mutateAsync({ display_name: name.trim() || null, currency });
+      await update.mutateAsync({ display_name: name.trim() || null, currency, theme: theme ?? "system" });
       toast.success("Settings saved");
     } catch (e) {
       toast.error(errorMessage(e, "Couldn't save your settings."));
@@ -50,7 +56,11 @@ export default function Settings() {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      /* Local session is cleared either way — always leave for the sign-in page. */
+    }
     navigate("/auth", { replace: true });
   };
 
@@ -78,6 +88,17 @@ export default function Settings() {
               <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {CURRENCIES.map((c) => (<SelectItem key={c.code} value={c.code}>{c.label}</SelectItem>))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label>Theme</Label>
+            <Select value={theme ?? "system"} onValueChange={onThemeChange}>
+              <SelectTrigger className="rounded-xl" aria-label="Theme"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="system">Match system</SelectItem>
               </SelectContent>
             </Select>
           </div>

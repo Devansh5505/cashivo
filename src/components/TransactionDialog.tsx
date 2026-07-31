@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useAddTransaction, useUpdateTransaction, type Transaction } from "@/hooks/useTransactions";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { errorMessage } from "@/lib/errors";
 
 const PAYMENT_METHODS = ["Cash", "Card", "UPI", "Bank Transfer", "Wallet", "Other"];
 
@@ -52,13 +53,15 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
     }
   }, [open, editTx, defaultType]);
 
-  const filteredCats = categories.filter((c) => c.type === type);
+  const filteredCats = useMemo(() => categories.filter((c) => c.type === type), [categories, type]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = parseFloat(amount);
-    if (isNaN(parsed) || parsed <= 0) return toast.error("Enter a valid amount");
-    if (!categoryId) return toast.error("Pick a category");
+    if (isNaN(parsed) || parsed <= 0) return toast.error("Enter an amount greater than zero.");
+    if (parsed > 1_000_000_000) return toast.error("That amount is too large.");
+    if (!date || Number.isNaN(new Date(date).getTime())) return toast.error("Pick a valid date.");
+    if (!categoryId) return toast.error("Pick a category.");
     const payload = {
       type,
       amount: parsed,
@@ -76,8 +79,8 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
         toast.success(type === "income" ? "Income added" : "Expense added");
       }
       onOpenChange(false);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to save");
+    } catch (err) {
+      toast.error(errorMessage(err, "Couldn't save this transaction."));
     }
   };
 
@@ -91,7 +94,7 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
           <ToggleGroup
             type="single"
             value={type}
-            onValueChange={(v) => v && setType(v as "income" | "expense")}
+            onValueChange={(v) => { if (!v) return; setType(v as "income" | "expense"); setCategoryId(""); }}
             className="grid grid-cols-2 gap-2"
           >
             <ToggleGroupItem value="expense" className="rounded-xl data-[state=on]:bg-destructive/10 data-[state=on]:text-destructive">
@@ -109,6 +112,7 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
               type="number"
               inputMode="decimal"
               step="0.01"
+              min="0.01"
               placeholder="0.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
@@ -124,6 +128,11 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
               <Select value={categoryId} onValueChange={setCategoryId}>
                 <SelectTrigger className="rounded-xl"><SelectValue placeholder="Select" /></SelectTrigger>
                 <SelectContent>
+                  {filteredCats.length === 0 && (
+                    <div className="px-2 py-3 text-sm text-muted-foreground">
+                      No {type} categories yet — add one on the Categories page.
+                    </div>
+                  )}
                   {filteredCats.map((c) => (
                     <SelectItem key={c.id} value={c.id}>
                       <span className="flex items-center gap-2">

@@ -13,7 +13,7 @@ export function useThemeSync() {
 
   useEffect(() => {
     if (applied.current || !profile?.theme) return;
-    if (["light", "dark", "system"].includes(profile.theme)) {
+    if (profile.theme === "light" || profile.theme === "dark" || profile.theme === "system") {
       applied.current = true;
       setTheme(profile.theme);
     }

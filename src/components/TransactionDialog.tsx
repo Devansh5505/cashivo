@@ -152,9 +152,10 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
           </div>
 
           <div className="space-y-2">
-            <Label>Payment method</Label>
+            <Label htmlFor="payment">Payment method</Label>
             <Select value={payment} onValueChange={setPayment}>
-              <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="payment" aria-label="Payment method" className="rounded-xl"><SelectValue /></SelectTrigger>
+
               <SelectContent>
                 {PAYMENT_METHODS.map((p) => (<SelectItem key={p} value={p}>{p}</SelectItem>))}
               </SelectContent>

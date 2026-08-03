@@ -124,9 +124,10 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label>Category</Label>
+              <Label htmlFor="category">Category</Label>
               <Select value={categoryId} onValueChange={setCategoryId}>
-                <SelectTrigger className="rounded-xl"><SelectValue placeholder="Select" /></SelectTrigger>
+                <SelectTrigger id="category" aria-label="Category" className="rounded-xl"><SelectValue placeholder="Select" /></SelectTrigger>
+
                 <SelectContent>
                   {filteredCats.length === 0 && (
                     <div className="px-2 py-3 text-sm text-muted-foreground">
@@ -151,9 +152,10 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
           </div>
 
           <div className="space-y-2">
-            <Label>Payment method</Label>
+            <Label htmlFor="payment">Payment method</Label>
             <Select value={payment} onValueChange={setPayment}>
-              <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="payment" aria-label="Payment method" className="rounded-xl"><SelectValue /></SelectTrigger>
+
               <SelectContent>
                 {PAYMENT_METHODS.map((p) => (<SelectItem key={p} value={p}>{p}</SelectItem>))}
               </SelectContent>

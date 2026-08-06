@@ -157,9 +157,13 @@
   .bg-hero-soft { background-color: hsl(var(--hero-foreground) / 0.15); }
   .border-hero-soft { border-color: hsl(var(--hero-foreground) / 0.28); }
   .bg-gradient-subtle { background: var(--gradient-subtle); }
+  .bg-gradient-charcoal { background: var(--gradient-charcoal); }
   .shadow-elegant { box-shadow: var(--shadow-elegant); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
   .shadow-soft { box-shadow: var(--shadow-md); }
+  /* Numeric emphasis for money figures */
+  .num { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+
 
   /* Micro-interactions */
   .interactive {

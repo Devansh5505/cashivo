@@ -51,9 +51,14 @@
 
     --radius: 1rem;
 
+    /* Charcoal "obsidian" surface used by the dashboard balance panel (both themes) */
+    --charcoal: 220 28% 11%;
+    --charcoal-soft: 220 24% 16%;
+
     --gradient-primary: linear-gradient(135deg, hsl(158 78% 35%) 0%, hsl(170 74% 40%) 100%);
     --gradient-hero: linear-gradient(135deg, hsl(158 78% 32%) 0%, hsl(174 70% 38%) 60%, hsl(190 65% 42%) 100%);
     --gradient-subtle: linear-gradient(180deg, hsl(150 40% 98%), hsl(155 30% 96%));
+    --gradient-charcoal: linear-gradient(150deg, hsl(220 28% 13%) 0%, hsl(220 30% 9%) 100%);
 
     --shadow-sm: 0 1px 2px hsl(220 15% 20% / 0.04);
     --shadow-md: 0 4px 12px hsl(220 15% 20% / 0.06);
@@ -111,9 +116,13 @@
     --input: 220 18% 18%;
     --ring: 160 74% 45%;
 
+    --charcoal: 220 26% 9%;
+    --charcoal-soft: 220 22% 14%;
+
     --gradient-primary: linear-gradient(135deg, hsl(158 70% 30%) 0%, hsl(170 65% 35%) 100%);
     --gradient-hero: linear-gradient(135deg, hsl(158 70% 25%) 0%, hsl(174 60% 30%) 60%, hsl(190 55% 32%) 100%);
     --gradient-subtle: linear-gradient(180deg, hsl(220 25% 8%), hsl(220 22% 11%));
+    --gradient-charcoal: linear-gradient(150deg, hsl(220 24% 12%) 0%, hsl(220 28% 7%) 100%);
 
     --shadow-elegant: 0 10px 30px -10px hsl(160 74% 45% / 0.35);
     --shadow-glow: 0 0 40px hsl(160 74% 55% / 0.25);
@@ -148,9 +157,13 @@
   .bg-hero-soft { background-color: hsl(var(--hero-foreground) / 0.15); }
   .border-hero-soft { border-color: hsl(var(--hero-foreground) / 0.28); }
   .bg-gradient-subtle { background: var(--gradient-subtle); }
+  .bg-gradient-charcoal { background: var(--gradient-charcoal); }
   .shadow-elegant { box-shadow: var(--shadow-elegant); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
   .shadow-soft { box-shadow: var(--shadow-md); }
+  /* Numeric emphasis for money figures */
+  .num { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+
 
   /* Micro-interactions */
   .interactive {

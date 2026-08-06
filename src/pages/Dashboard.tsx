@@ -335,7 +335,7 @@ function StatCard({ icon, label, value, tone }: { icon: React.ReactNode; label: 
   const t = TONES[tone];
   return (
     <Card className="rounded-3xl border-border/60 shadow-soft card-hover surface-tint">
-      <CardContent className="flex h-full flex-col justify-between gap-6 p-6">
+      <CardContent className="flex h-full flex-col justify-center gap-5 p-6">
         <div className="flex items-start justify-between">
           <span className={`flex h-9 w-9 items-center justify-center rounded-xl ring-1 ${t.badge}`}>{icon}</span>
           <span className={`h-1 w-8 rounded-full ${t.bar} opacity-40`} />

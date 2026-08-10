@@ -194,15 +194,19 @@ export default function Dashboard() {
 
 
       {/* Charts */}
-      <section className="grid gap-5 lg:grid-cols-3">
-        <Card className="rounded-3xl border-border/60 shadow-soft card-hover lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 font-display text-base">
-              <TrendingUp className="h-4 w-4 text-primary" /> Monthly cash flow
+      <section className="grid gap-4 lg:grid-cols-3 lg:gap-5">
+        <Card className="rounded-3xl border-border/60 elev-2 card-hover lg:col-span-2">
+          <CardHeader className="gap-1 pb-1">
+            <CardTitle className="section-title flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <TrendingUp className="h-4 w-4" />
+              </span>
+              Monthly cash flow
             </CardTitle>
-            <p className="text-xs text-muted-foreground">Last 6 months</p>
+            <p className="pl-9 text-xs text-muted-foreground">Last 6 months</p>
           </CardHeader>
-          <CardContent className="pt-2">
+          <CardContent className="pt-3">
+
             <ResponsiveContainer width="100%" height={260}>
               <AreaChart data={cashFlow} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
                 <defs>

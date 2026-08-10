@@ -108,21 +108,23 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-10 w-56 rounded-xl" />
-        <div className="grid gap-5 lg:grid-cols-5">
-          <Skeleton className="h-48 rounded-3xl lg:col-span-2" />
-          <Skeleton className="h-48 rounded-3xl" />
-          <Skeleton className="h-48 rounded-3xl" />
-          <Skeleton className="h-48 rounded-3xl" />
+      <div className="space-y-7 md:space-y-9">
+        <Skeleton className="h-14 w-56 rounded-2xl" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-5">
+          <Skeleton className="h-56 rounded-3xl sm:col-span-2" />
+          <Skeleton className="h-56 rounded-3xl" />
+          <Skeleton className="h-56 rounded-3xl" />
+          <Skeleton className="h-56 rounded-3xl" />
         </div>
-        <div className="grid gap-5 lg:grid-cols-3">
+        <div className="grid gap-4 lg:grid-cols-3 lg:gap-5">
           <Skeleton className="h-80 rounded-3xl lg:col-span-2" />
           <Skeleton className="h-80 rounded-3xl" />
         </div>
+        <Skeleton className="h-64 rounded-3xl" />
       </div>
     );
   }
+
 
   const tooltipStyle = {
     borderRadius: 14,

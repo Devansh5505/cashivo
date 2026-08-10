@@ -235,12 +235,12 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="flex flex-col rounded-3xl border-border/60 shadow-soft card-hover">
-          <CardHeader className="pb-2">
-            <CardTitle className="font-display text-base">Spending by category</CardTitle>
+        <Card className="flex flex-col rounded-3xl border-border/60 elev-2 card-hover">
+          <CardHeader className="gap-1 pb-1">
+            <CardTitle className="section-title">Spending by category</CardTitle>
             <p className="text-xs text-muted-foreground">{format(now, "MMMM yyyy")}</p>
           </CardHeader>
-          <CardContent className="flex flex-1 flex-col justify-between pt-2">
+          <CardContent className="flex flex-1 flex-col justify-between pt-3">
             {byCategory.length === 0 ? (
               <p className="py-16 text-center text-sm text-muted-foreground">No expenses this month yet.</p>
             ) : (
@@ -248,25 +248,36 @@ export default function Dashboard() {
                 <div className="relative">
                   <ResponsiveContainer width="100%" height={200}>
                     <PieChart>
-                      <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={64} outerRadius={90} paddingAngle={3} stroke="hsl(var(--card))" strokeWidth={2}>
+                      <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={66} outerRadius={92} paddingAngle={3} cornerRadius={6} stroke="hsl(var(--card))" strokeWidth={2}>
                         {byCategory.map((c, i) => <Cell key={i} fill={c.color} />)}
                       </Pie>
                       <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatCurrency(v, currency)} />
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Total</span>
-                    <span className="font-display text-lg font-bold num">{formatCompact(categoryTotal, currency)}</span>
+                    <span className="eyebrow text-[10px]">Total</span>
+                    <span className="mt-0.5 font-display text-xl font-bold num">{formatCompact(categoryTotal, currency)}</span>
                   </div>
                 </div>
-                <ul className="mt-5 space-y-2.5">
+                <ul className="mt-6 space-y-3">
                   {byCategory.slice(0, 4).map((c) => (
-                    <li key={c.name} className="flex items-center justify-between text-sm">
-                      <span className="flex min-w-0 items-center gap-2.5">
-                        <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: c.color }} />
-                        <span className="truncate text-muted-foreground">{c.name}</span>
-                      </span>
-                      <span className="num font-semibold">{formatCurrency(c.value, currency)}</span>
+                    <li key={c.name} className="space-y-1.5">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="flex min-w-0 items-center gap-2.5">
+                          <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: c.color }} />
+                          <span className="truncate text-muted-foreground">{c.name}</span>
+                        </span>
+                        <span className="num font-semibold">{formatCurrency(c.value, currency)}</span>
+                      </div>
+                      <div className="h-1 overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${categoryTotal ? Math.max(4, (c.value / categoryTotal) * 100) : 0}%`,
+                            background: c.color,
+                          }}
+                        />
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -277,14 +288,15 @@ export default function Dashboard() {
       </section>
 
       {/* Recent */}
-      <Card className="rounded-3xl border-border/60 shadow-soft card-hover">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="font-display text-base">Recent transactions</CardTitle>
-          <Button variant="ghost" size="sm" className="gap-1 rounded-xl text-primary hover:text-primary" onClick={() => navigate("/transactions")}>
+      <Card className="rounded-3xl border-border/60 elev-2 card-hover">
+        <CardHeader className="flex flex-row items-center justify-between pb-1">
+          <CardTitle className="section-title">Recent transactions</CardTitle>
+          <Button variant="ghost" size="sm" className="gap-1 rounded-xl text-primary hover:bg-primary/10 hover:text-primary" onClick={() => navigate("/transactions")}>
             View all <ChevronRight className="h-4 w-4" />
           </Button>
         </CardHeader>
-        <CardContent className="pt-2">
+        <CardContent className="pt-3">
+
           {recent.length === 0 ? (
             <div className="py-12 text-center">
               <p className="mb-4 text-muted-foreground">No transactions yet. Add your first one!</p>

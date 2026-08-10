@@ -353,17 +353,18 @@ const TONES: Record<Tone, { badge: string; value: string; bar: string }> = {
 function StatCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: Tone }) {
   const t = TONES[tone];
   return (
-    <Card className="rounded-3xl border-border/60 shadow-soft card-hover surface-tint">
-      <CardContent className="flex h-full flex-col justify-center gap-5 p-6">
+    <Card className="group relative overflow-hidden rounded-3xl border-border/60 elev-2 card-hover surface-tint">
+      <span className={`absolute inset-x-0 top-0 h-[3px] ${t.bar} opacity-70`} />
+      <CardContent className="flex h-full flex-col justify-center gap-6 p-6">
         <div className="flex items-start justify-between">
-          <span className={`flex h-9 w-9 items-center justify-center rounded-xl ring-1 ${t.badge}`}>{icon}</span>
-          <span className={`h-1 w-8 rounded-full ${t.bar} opacity-40`} />
+          <span className={`flex h-10 w-10 items-center justify-center rounded-2xl ring-1 ${t.badge}`}>{icon}</span>
         </div>
-        <div className="space-y-1">
-          <p className="text-xs font-medium text-muted-foreground">{label}</p>
-          <p className={`num font-display text-2xl font-bold ${t.value}`}>{value}</p>
+        <div className="space-y-1.5">
+          <p className="text-xs font-medium tracking-[0.01em] text-muted-foreground">{label}</p>
+          <p className={`num font-display text-[26px] leading-none font-bold ${t.value}`}>{value}</p>
         </div>
       </CardContent>
+
     </Card>
   );
 }

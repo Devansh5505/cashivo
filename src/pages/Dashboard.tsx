@@ -108,21 +108,23 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-10 w-56 rounded-xl" />
-        <div className="grid gap-5 lg:grid-cols-5">
-          <Skeleton className="h-48 rounded-3xl lg:col-span-2" />
-          <Skeleton className="h-48 rounded-3xl" />
-          <Skeleton className="h-48 rounded-3xl" />
-          <Skeleton className="h-48 rounded-3xl" />
+      <div className="space-y-7 md:space-y-9">
+        <Skeleton className="h-14 w-56 rounded-2xl" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-5">
+          <Skeleton className="h-56 rounded-3xl sm:col-span-2" />
+          <Skeleton className="h-56 rounded-3xl" />
+          <Skeleton className="h-56 rounded-3xl" />
+          <Skeleton className="h-56 rounded-3xl" />
         </div>
-        <div className="grid gap-5 lg:grid-cols-3">
+        <div className="grid gap-4 lg:grid-cols-3 lg:gap-5">
           <Skeleton className="h-80 rounded-3xl lg:col-span-2" />
           <Skeleton className="h-80 rounded-3xl" />
         </div>
+        <Skeleton className="h-64 rounded-3xl" />
       </div>
     );
   }
+
 
   const tooltipStyle = {
     borderRadius: 14,
@@ -138,46 +140,48 @@ export default function Dashboard() {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="space-y-6 md:space-y-8"
+      className="space-y-7 md:space-y-9"
     >
       {/* Page header */}
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div className="space-y-1">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            {format(now, "EEEE, MMM d")}
-          </p>
-          <h1 className="font-display text-[26px] leading-tight md:text-3xl font-bold">
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-border/60 pb-5">
+        <div className="space-y-1.5">
+          <p className="eyebrow">{format(now, "EEEE, MMM d")}</p>
+          <h1 className="font-display text-[26px] leading-tight md:text-[32px] font-bold">
             Hi{profile?.display_name ? `, ${profile.display_name.split(" ")[0]}` : ""} 👋
           </h1>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="rounded-full bg-muted/70 px-3 py-1.5 text-xs font-medium text-muted-foreground">
           {stats.monthCount} transaction{stats.monthCount === 1 ? "" : "s"} this month
         </p>
       </header>
 
       {/* Balance + stats */}
-      <section className="grid gap-5 lg:grid-cols-5">
-        <Card className="relative overflow-hidden rounded-3xl border-none bg-gradient-charcoal text-hero shadow-elegant lg:col-span-2">
-          <div className="pointer-events-none absolute -bottom-20 -right-16 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
-          <CardContent className="relative flex h-full flex-col justify-between gap-6 p-7 md:p-8">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-5">
+        <Card className="relative overflow-hidden rounded-3xl border-none bg-gradient-charcoal text-hero elev-3 sm:col-span-2">
+          <div className="pointer-events-none absolute -bottom-24 -right-16 h-64 w-64 rounded-full bg-primary/25 blur-3xl" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-hero-soft" />
+          <CardContent className="relative flex h-full flex-col justify-between gap-7 p-7 md:p-8">
             <div>
               <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] opacity-70">
                 <Wallet className="h-3.5 w-3.5" /> Total balance
               </div>
-              <div className="mt-3 font-display text-[34px] md:text-[40px] font-bold num">
+              <div className="mt-3 font-display text-[34px] leading-none md:text-[42px] font-bold num">
                 {formatCurrency(stats.balance, currency)}
               </div>
+              <p className="mt-3 text-xs opacity-60">
+                Net of all income and expenses to date
+              </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button
                 onClick={() => openAdd("expense")}
-                className="flex-1 h-12 rounded-2xl gap-2 press bg-destructive font-semibold text-destructive-foreground shadow-soft hover:bg-destructive/90 focus-visible:ring-2 focus-visible:ring-primary"
+                className="flex-1 h-12 rounded-2xl gap-2 press bg-destructive font-semibold text-destructive-foreground elev-2 hover:bg-destructive/90"
               >
                 <Plus className="h-4 w-4" /> Add Expense
               </Button>
               <Button
                 onClick={() => openAdd("income")}
-                className="flex-1 h-12 rounded-2xl gap-2 press bg-primary font-semibold text-primary-foreground shadow-soft hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary"
+                className="flex-1 h-12 rounded-2xl gap-2 press bg-primary font-semibold text-primary-foreground elev-2 hover:bg-primary/90"
               >
                 <Plus className="h-4 w-4" /> Add Income
               </Button>
@@ -190,17 +194,22 @@ export default function Dashboard() {
         <StatCard icon={<PiggyBank className="h-4 w-4" />} label="Savings this month" value={formatCurrency(stats.savings, currency)} tone={stats.savings >= 0 ? "info" : "destructive"} />
       </section>
 
+
       {/* Charts */}
-      <section className="grid gap-5 lg:grid-cols-3">
-        <Card className="rounded-3xl border-border/60 shadow-soft card-hover lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 font-display text-base">
-              <TrendingUp className="h-4 w-4 text-primary" /> Monthly cash flow
+      <section className="grid gap-4 lg:grid-cols-3 lg:gap-5">
+        <Card className="rounded-3xl border-border/60 elev-2 card-hover lg:col-span-2">
+          <CardHeader className="gap-1 pb-1">
+            <CardTitle className="section-title flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <TrendingUp className="h-4 w-4" />
+              </span>
+              Monthly cash flow
             </CardTitle>
-            <p className="text-xs text-muted-foreground">Last 6 months</p>
+            <p className="pl-9 text-xs text-muted-foreground">Last 6 months</p>
           </CardHeader>
-          <CardContent className="pt-2">
-            <ResponsiveContainer width="100%" height={260}>
+          <CardContent className="pt-3">
+
+            <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={cashFlow} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
                 <defs>
                   <linearGradient id="cf-income" x1="0" y1="0" x2="0" y2="1">
@@ -228,12 +237,12 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="flex flex-col rounded-3xl border-border/60 shadow-soft card-hover">
-          <CardHeader className="pb-2">
-            <CardTitle className="font-display text-base">Spending by category</CardTitle>
+        <Card className="flex flex-col rounded-3xl border-border/60 elev-2 card-hover">
+          <CardHeader className="gap-1 pb-1">
+            <CardTitle className="section-title">Spending by category</CardTitle>
             <p className="text-xs text-muted-foreground">{format(now, "MMMM yyyy")}</p>
           </CardHeader>
-          <CardContent className="flex flex-1 flex-col justify-between pt-2">
+          <CardContent className="flex flex-1 flex-col justify-between pt-3">
             {byCategory.length === 0 ? (
               <p className="py-16 text-center text-sm text-muted-foreground">No expenses this month yet.</p>
             ) : (
@@ -241,25 +250,36 @@ export default function Dashboard() {
                 <div className="relative">
                   <ResponsiveContainer width="100%" height={200}>
                     <PieChart>
-                      <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={64} outerRadius={90} paddingAngle={3} stroke="hsl(var(--card))" strokeWidth={2}>
+                      <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={66} outerRadius={92} paddingAngle={3} cornerRadius={6} stroke="hsl(var(--card))" strokeWidth={2}>
                         {byCategory.map((c, i) => <Cell key={i} fill={c.color} />)}
                       </Pie>
                       <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatCurrency(v, currency)} />
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Total</span>
-                    <span className="font-display text-lg font-bold num">{formatCompact(categoryTotal, currency)}</span>
+                    <span className="eyebrow text-[10px]">Total</span>
+                    <span className="mt-0.5 font-display text-xl font-bold num">{formatCompact(categoryTotal, currency)}</span>
                   </div>
                 </div>
-                <ul className="mt-5 space-y-2.5">
+                <ul className="mt-6 space-y-3">
                   {byCategory.slice(0, 4).map((c) => (
-                    <li key={c.name} className="flex items-center justify-between text-sm">
-                      <span className="flex min-w-0 items-center gap-2.5">
-                        <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: c.color }} />
-                        <span className="truncate text-muted-foreground">{c.name}</span>
-                      </span>
-                      <span className="num font-semibold">{formatCurrency(c.value, currency)}</span>
+                    <li key={c.name} className="space-y-1.5">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="flex min-w-0 items-center gap-2.5">
+                          <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: c.color }} />
+                          <span className="truncate text-muted-foreground">{c.name}</span>
+                        </span>
+                        <span className="num font-semibold">{formatCurrency(c.value, currency)}</span>
+                      </div>
+                      <div className="h-1 overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${categoryTotal ? Math.max(4, (c.value / categoryTotal) * 100) : 0}%`,
+                            background: c.color,
+                          }}
+                        />
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -270,14 +290,15 @@ export default function Dashboard() {
       </section>
 
       {/* Recent */}
-      <Card className="rounded-3xl border-border/60 shadow-soft card-hover">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="font-display text-base">Recent transactions</CardTitle>
-          <Button variant="ghost" size="sm" className="gap-1 rounded-xl text-primary hover:text-primary" onClick={() => navigate("/transactions")}>
+      <Card className="rounded-3xl border-border/60 elev-2 card-hover">
+        <CardHeader className="flex flex-row items-center justify-between pb-1">
+          <CardTitle className="section-title">Recent transactions</CardTitle>
+          <Button variant="ghost" size="sm" className="gap-1 rounded-xl text-primary hover:bg-primary/10 hover:text-primary" onClick={() => navigate("/transactions")}>
             View all <ChevronRight className="h-4 w-4" />
           </Button>
         </CardHeader>
-        <CardContent className="pt-2">
+        <CardContent className="pt-3">
+
           {recent.length === 0 ? (
             <div className="py-12 text-center">
               <p className="mb-4 text-muted-foreground">No transactions yet. Add your first one!</p>
@@ -334,17 +355,18 @@ const TONES: Record<Tone, { badge: string; value: string; bar: string }> = {
 function StatCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: Tone }) {
   const t = TONES[tone];
   return (
-    <Card className="rounded-3xl border-border/60 shadow-soft card-hover surface-tint">
-      <CardContent className="flex h-full flex-col justify-center gap-5 p-6">
+    <Card className="group relative overflow-hidden rounded-3xl border-border/60 elev-2 card-hover surface-tint">
+      <span className={`absolute inset-x-0 top-0 h-[3px] ${t.bar} opacity-70`} />
+      <CardContent className="flex h-full flex-col justify-center gap-6 p-6">
         <div className="flex items-start justify-between">
-          <span className={`flex h-9 w-9 items-center justify-center rounded-xl ring-1 ${t.badge}`}>{icon}</span>
-          <span className={`h-1 w-8 rounded-full ${t.bar} opacity-40`} />
+          <span className={`flex h-10 w-10 items-center justify-center rounded-2xl ring-1 ${t.badge}`}>{icon}</span>
         </div>
-        <div className="space-y-1">
-          <p className="text-xs font-medium text-muted-foreground">{label}</p>
-          <p className={`num font-display text-2xl font-bold ${t.value}`}>{value}</p>
+        <div className="space-y-1.5">
+          <p className="text-xs font-medium tracking-[0.01em] text-muted-foreground">{label}</p>
+          <p className={`num font-display text-[26px] leading-none font-bold ${t.value}`}>{value}</p>
         </div>
       </CardContent>
+
     </Card>
   );
 }

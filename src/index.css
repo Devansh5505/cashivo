@@ -60,10 +60,19 @@
     --gradient-subtle: linear-gradient(180deg, hsl(150 40% 98%), hsl(155 30% 96%));
     --gradient-charcoal: linear-gradient(150deg, hsl(220 28% 13%) 0%, hsl(220 30% 9%) 100%);
 
+    /* Elevation scale — one source of truth for depth */
     --shadow-sm: 0 1px 2px hsl(220 15% 20% / 0.04);
     --shadow-md: 0 4px 12px hsl(220 15% 20% / 0.06);
+    --shadow-lg: 0 12px 32px -12px hsl(220 20% 18% / 0.14), 0 2px 6px hsl(220 15% 20% / 0.05);
     --shadow-elegant: 0 10px 30px -10px hsl(158 78% 35% / 0.25);
     --shadow-glow: 0 0 40px hsl(160 74% 55% / 0.35);
+
+    /* Motion — shared easing + durations */
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 140ms;
+    --dur-base: 240ms;
+    --dur-slow: 420ms;
+
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 220 15% 25%;
@@ -124,6 +133,9 @@
     --gradient-subtle: linear-gradient(180deg, hsl(220 25% 8%), hsl(220 22% 11%));
     --gradient-charcoal: linear-gradient(150deg, hsl(220 24% 12%) 0%, hsl(220 28% 7%) 100%);
 
+    --shadow-sm: 0 1px 2px hsl(220 40% 2% / 0.4);
+    --shadow-md: 0 4px 14px hsl(220 40% 2% / 0.45);
+    --shadow-lg: 0 16px 38px -14px hsl(220 40% 2% / 0.65), 0 2px 6px hsl(220 40% 2% / 0.4);
     --shadow-elegant: 0 10px 30px -10px hsl(160 74% 45% / 0.35);
     --shadow-glow: 0 0 40px hsl(160 74% 55% / 0.25);
 
@@ -148,6 +160,13 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
   h1, h2, h3, h4, .font-display { font-family: 'Sora', 'Inter', sans-serif; letter-spacing: -0.02em; }
+  /* Consistent, brand-coloured focus ring on every interactive element */
+  :where(a, button, [role="button"], input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: calc(var(--radius) - 8px);
+  }
+  ::selection { background: hsl(var(--primary) / 0.22); }
 }
 
 @layer utilities {
@@ -161,19 +180,43 @@
   .shadow-elegant { box-shadow: var(--shadow-elegant); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
   .shadow-soft { box-shadow: var(--shadow-md); }
+
+  /* Elevation utilities — use these instead of ad-hoc shadows */
+  .elev-1 { box-shadow: var(--shadow-sm); }
+  .elev-2 { box-shadow: var(--shadow-md); }
+  .elev-3 { box-shadow: var(--shadow-lg); }
+
+  /* Typography helpers */
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground;
+  }
+  .section-title {
+    @apply font-display text-[15px] font-semibold tracking-[-0.01em];
+  }
   /* Numeric emphasis for money figures */
   .num { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 
-
   /* Micro-interactions */
   .interactive {
-    @apply transition-all duration-300 ease-out;
+    transition: background-color var(--dur-base) var(--ease-out-soft),
+      color var(--dur-base) var(--ease-out-soft),
+      border-color var(--dur-base) var(--ease-out-soft),
+      box-shadow var(--dur-base) var(--ease-out-soft),
+      transform var(--dur-base) var(--ease-out-soft);
   }
   .card-hover {
-    @apply transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-elegant;
+    transition: box-shadow var(--dur-base) var(--ease-out-soft),
+      transform var(--dur-base) var(--ease-out-soft),
+      border-color var(--dur-base) var(--ease-out-soft);
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: hsl(var(--primary) / 0.28);
   }
   .press {
-    @apply active:scale-[0.97] transition-transform duration-150;
+    @apply active:scale-[0.97];
+    transition: transform var(--dur-fast) var(--ease-out-soft);
   }
   .surface-tint {
     background-image: linear-gradient(160deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.55) 100%);

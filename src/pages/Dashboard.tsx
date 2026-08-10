@@ -209,7 +209,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="pt-3">
 
-            <ResponsiveContainer width="100%" height={260}>
+            <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={cashFlow} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
                 <defs>
                   <linearGradient id="cf-income" x1="0" y1="0" x2="0" y2="1">

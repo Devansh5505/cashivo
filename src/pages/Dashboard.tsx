@@ -138,46 +138,48 @@ export default function Dashboard() {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="space-y-6 md:space-y-8"
+      className="space-y-7 md:space-y-9"
     >
       {/* Page header */}
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div className="space-y-1">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            {format(now, "EEEE, MMM d")}
-          </p>
-          <h1 className="font-display text-[26px] leading-tight md:text-3xl font-bold">
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-border/60 pb-5">
+        <div className="space-y-1.5">
+          <p className="eyebrow">{format(now, "EEEE, MMM d")}</p>
+          <h1 className="font-display text-[26px] leading-tight md:text-[32px] font-bold">
             Hi{profile?.display_name ? `, ${profile.display_name.split(" ")[0]}` : ""} 👋
           </h1>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="rounded-full bg-muted/70 px-3 py-1.5 text-xs font-medium text-muted-foreground">
           {stats.monthCount} transaction{stats.monthCount === 1 ? "" : "s"} this month
         </p>
       </header>
 
       {/* Balance + stats */}
-      <section className="grid gap-5 lg:grid-cols-5">
-        <Card className="relative overflow-hidden rounded-3xl border-none bg-gradient-charcoal text-hero shadow-elegant lg:col-span-2">
-          <div className="pointer-events-none absolute -bottom-20 -right-16 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
-          <CardContent className="relative flex h-full flex-col justify-between gap-6 p-7 md:p-8">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-5">
+        <Card className="relative overflow-hidden rounded-3xl border-none bg-gradient-charcoal text-hero elev-3 sm:col-span-2">
+          <div className="pointer-events-none absolute -bottom-24 -right-16 h-64 w-64 rounded-full bg-primary/25 blur-3xl" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-hero-soft" />
+          <CardContent className="relative flex h-full flex-col justify-between gap-7 p-7 md:p-8">
             <div>
               <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] opacity-70">
                 <Wallet className="h-3.5 w-3.5" /> Total balance
               </div>
-              <div className="mt-3 font-display text-[34px] md:text-[40px] font-bold num">
+              <div className="mt-3 font-display text-[34px] leading-none md:text-[42px] font-bold num">
                 {formatCurrency(stats.balance, currency)}
               </div>
+              <p className="mt-3 text-xs opacity-60">
+                Net of all income and expenses to date
+              </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button
                 onClick={() => openAdd("expense")}
-                className="flex-1 h-12 rounded-2xl gap-2 press bg-destructive font-semibold text-destructive-foreground shadow-soft hover:bg-destructive/90 focus-visible:ring-2 focus-visible:ring-primary"
+                className="flex-1 h-12 rounded-2xl gap-2 press bg-destructive font-semibold text-destructive-foreground elev-2 hover:bg-destructive/90"
               >
                 <Plus className="h-4 w-4" /> Add Expense
               </Button>
               <Button
                 onClick={() => openAdd("income")}
-                className="flex-1 h-12 rounded-2xl gap-2 press bg-primary font-semibold text-primary-foreground shadow-soft hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary"
+                className="flex-1 h-12 rounded-2xl gap-2 press bg-primary font-semibold text-primary-foreground elev-2 hover:bg-primary/90"
               >
                 <Plus className="h-4 w-4" /> Add Income
               </Button>
@@ -189,6 +191,7 @@ export default function Dashboard() {
         <StatCard icon={<ArrowDownRight className="h-4 w-4" />} label="Expenses this month" value={formatCurrency(stats.expense, currency)} tone="destructive" />
         <StatCard icon={<PiggyBank className="h-4 w-4" />} label="Savings this month" value={formatCurrency(stats.savings, currency)} tone={stats.savings >= 0 ? "info" : "destructive"} />
       </section>
+
 
       {/* Charts */}
       <section className="grid gap-5 lg:grid-cols-3">

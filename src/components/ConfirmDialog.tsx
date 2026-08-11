@@ -33,15 +33,17 @@ export function ConfirmDialog({
 }: Props) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="rounded-2xl">
-        <AlertDialogHeader>
-          <AlertDialogTitle className="font-display">{title}</AlertDialogTitle>
-          {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
+      <AlertDialogContent className="rounded-2xl elev-3 sm:max-w-sm">
+        <AlertDialogHeader className="text-left">
+          <AlertDialogTitle className="font-display text-lg">{title}</AlertDialogTitle>
+          {description && (
+            <AlertDialogDescription className="text-sm leading-relaxed">{description}</AlertDialogDescription>
+          )}
         </AlertDialogHeader>
         <AlertDialogFooter className="gap-2 sm:gap-2">
-          <AlertDialogCancel className="rounded-xl press">Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="rounded-xl h-11 press interactive">Cancel</AlertDialogCancel>
           <AlertDialogAction
-            className={`rounded-xl press ${destructive ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}`}
+            className={`rounded-xl h-11 press interactive ${destructive ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}`}
             disabled={loading}
             onClick={(e) => {
               e.preventDefault();
@@ -55,3 +57,4 @@ export function ConfirmDialog({
     </AlertDialog>
   );
 }
+

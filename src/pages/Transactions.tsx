@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, Trash2, Pencil, X } from "lucide-react";
+import { Plus, Search, Trash2, Pencil, X, SlidersHorizontal, ArrowDownLeft, ArrowUpRight, Receipt } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { useCategories } from "@/hooks/useCategories";
 import { useTransactions, useDeleteTransaction, type Transaction } from "@/hooks/useTransactions";
@@ -85,30 +85,54 @@ export default function Transactions() {
   const openEdit = (t: Transaction) => { setEdit(t); setDlgOpen(true); };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="font-display text-2xl md:text-3xl font-bold">Transactions</h1>
-          <p className="text-sm text-muted-foreground">{filtered.length} of {transactions.length}</p>
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+      {/* Header */}
+      <header className="flex flex-wrap items-end justify-between gap-3 border-b border-border/70 pb-5">
+        <div className="space-y-1">
+          <p className="eyebrow">Activity</p>
+          <h1 className="font-display text-2xl md:text-3xl font-bold tracking-[-0.02em]">Transactions</h1>
+          <p className="text-sm text-muted-foreground">
+            Showing <span className="num font-medium text-foreground">{filtered.length}</span> of{" "}
+            <span className="num">{transactions.length}</span> records
+          </p>
         </div>
-        <Button onClick={openAdd} className="rounded-xl gap-2 press"><Plus className="h-4 w-4" /> Add</Button>
-      </div>
+        <Button onClick={openAdd} className="rounded-xl h-11 gap-2 px-5 press elev-2 bg-gradient-primary text-primary-foreground hover:opacity-95">
+          <Plus className="h-4 w-4" /> Add transaction
+        </Button>
+      </header>
 
-      <Card className="rounded-2xl shadow-soft">
-        <CardContent className="p-4 space-y-3">
+      {/* Filters */}
+      <Card className="rounded-2xl border-border/70 elev-1 surface-tint">
+        <CardContent className="p-4 md:p-5 space-y-4">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+            <span className="eyebrow">Search &amp; filter</span>
+          </div>
+
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search notes, categories, methods…"
               aria-label="Search transactions"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="rounded-xl pl-9"
+              className="rounded-xl h-11 pl-10 pr-10 bg-card interactive"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                aria-label="Clear search"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:text-foreground interactive"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="rounded-xl" aria-label="Filter by type"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="rounded-xl h-10 bg-card interactive" aria-label="Filter by type"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All types</SelectItem>
                 <SelectItem value="income">Income</SelectItem>
@@ -116,97 +140,166 @@ export default function Transactions() {
               </SelectContent>
             </Select>
             <Select value={catFilter} onValueChange={setCatFilter}>
-              <SelectTrigger className="rounded-xl" aria-label="Filter by category"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="rounded-xl h-10 bg-card interactive" aria-label="Filter by category"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All categories</SelectItem>
-                {categories.map((c) => (<SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>))}
+                {categories.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    <span className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full" style={{ background: c.color }} />
+                      {c.name}
+                    </span>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Select value={payFilter} onValueChange={setPayFilter}>
-              <SelectTrigger className="rounded-xl" aria-label="Filter by payment method"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="rounded-xl h-10 bg-card interactive" aria-label="Filter by payment method"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All methods</SelectItem>
                 {PAYMENT_METHODS.map((p) => (<SelectItem key={p} value={p}>{p}</SelectItem>))}
               </SelectContent>
             </Select>
-            <div className="grid grid-cols-2 gap-2">
-              <Input type="number" min="0" placeholder="Min" aria-label="Minimum amount" value={minAmt} onChange={(e) => setMinAmt(e.target.value)} className="rounded-xl" />
-              <Input type="number" min="0" placeholder="Max" aria-label="Maximum amount" value={maxAmt} onChange={(e) => setMaxAmt(e.target.value)} className="rounded-xl" />
+            <div className="grid grid-cols-2 gap-2.5">
+              <Input type="number" min="0" placeholder="Min" aria-label="Minimum amount" value={minAmt} onChange={(e) => setMinAmt(e.target.value)} className="rounded-xl h-10 num bg-card interactive" />
+              <Input type="number" min="0" placeholder="Max" aria-label="Maximum amount" value={maxAmt} onChange={(e) => setMaxAmt(e.target.value)} className="rounded-xl h-10 num bg-card interactive" />
             </div>
-            <Input type="date" aria-label="From date" max={to || undefined} value={from} onChange={(e) => setFrom(e.target.value)} className="rounded-xl md:col-span-2" />
-            <Input type="date" aria-label="To date" min={from || undefined} value={to} onChange={(e) => setTo(e.target.value)} className="rounded-xl md:col-span-2" />
+            <Input type="date" aria-label="From date" max={to || undefined} value={from} onChange={(e) => setFrom(e.target.value)} className="rounded-xl h-10 num bg-card interactive col-span-2" />
+            <Input type="date" aria-label="To date" min={from || undefined} value={to} onChange={(e) => setTo(e.target.value)} className="rounded-xl h-10 num bg-card interactive col-span-2" />
           </div>
+
           {hasFilters && (
-            <Button variant="ghost" size="sm" onClick={clearFilters} className="rounded-xl gap-1.5 text-muted-foreground">
-              <X className="h-3.5 w-3.5" /> Clear filters
-            </Button>
+            <div className="flex justify-end pt-0.5">
+              <Button variant="ghost" size="sm" onClick={clearFilters} className="rounded-xl gap-1.5 text-muted-foreground hover:text-foreground press">
+                <X className="h-3.5 w-3.5" /> Clear filters
+              </Button>
+            </div>
           )}
         </CardContent>
       </Card>
 
+      {/* List */}
       {isLoading ? (
-        <div className="space-y-2" aria-busy="true">
+        <div className="space-y-2.5" aria-busy="true">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-[76px] w-full rounded-2xl" />
+            <Card key={i} className="rounded-2xl border-border/70 elev-1">
+              <CardContent className="p-4 flex items-center gap-3">
+                <Skeleton className="h-11 w-11 rounded-xl shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-32 rounded-md" />
+                  <Skeleton className="h-3 w-48 rounded-md" />
+                </div>
+                <Skeleton className="h-5 w-20 rounded-md" />
+              </CardContent>
+            </Card>
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <Card className="rounded-2xl shadow-soft">
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground mb-4">
-              {transactions.length === 0 ? "No transactions yet — add your first one." : "No transactions match your filters."}
-            </p>
+        <Card className="rounded-2xl border-border/70 elev-1 surface-tint">
+          <CardContent className="py-16 text-center flex flex-col items-center gap-4">
+            <div className="h-14 w-14 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center elev-1">
+              <Receipt className="h-6 w-6" aria-hidden="true" />
+            </div>
+            <div className="space-y-1">
+              <p className="section-title">
+                {transactions.length === 0 ? "No transactions yet" : "Nothing matches those filters"}
+              </p>
+              <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                {transactions.length === 0
+                  ? "Add your first income or expense to start tracking your cash flow."
+                  : "Try widening your date range or clearing a filter."}
+              </p>
+            </div>
             {transactions.length === 0 ? (
-              <Button onClick={openAdd} className="rounded-xl gap-2 press"><Plus className="h-4 w-4" /> Add transaction</Button>
+              <Button onClick={openAdd} className="rounded-xl h-11 gap-2 px-5 press bg-gradient-primary text-primary-foreground hover:opacity-95">
+                <Plus className="h-4 w-4" /> Add transaction
+              </Button>
             ) : (
-              <Button variant="outline" onClick={clearFilters} className="rounded-xl press">Clear filters</Button>
+              <Button variant="outline" onClick={clearFilters} className="rounded-xl h-11 px-5 press">Clear filters</Button>
             )}
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-2">
-          {filtered.map((t) => {
+        <ul className="space-y-2.5">
+          {filtered.map((t, i) => {
             const cat = categoryById.get(t.category_id ?? "");
+            const income = t.type === "income";
+            const color = cat?.color ?? "hsl(var(--muted-foreground))";
             return (
-              <Card key={t.id} className="rounded-2xl shadow-soft card-hover">
-                <CardContent className="p-4 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div
-                      className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0"
-                      style={{ background: (cat?.color ?? "#64748b") + "22", color: cat?.color ?? "#64748b" }}
-                      aria-hidden="true"
-                    >
-                      <span className="font-bold">{cat?.name?.[0] ?? "?"}</span>
+              <motion.li
+                key={t.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.24, delay: Math.min(i, 8) * 0.02, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Card className="group relative overflow-hidden rounded-2xl border-border/70 elev-1 card-hover">
+                  {/* type accent rail */}
+                  <span
+                    aria-hidden="true"
+                    className={`absolute left-0 top-0 h-full w-[3px] ${income ? "bg-success" : "bg-destructive"} opacity-70`}
+                  />
+                  <CardContent className="p-4 pl-5 flex items-center gap-3">
+                    <div className="relative shrink-0">
+                      <div
+                        className="h-11 w-11 rounded-xl flex items-center justify-center font-display font-bold text-sm"
+                        style={{ background: `color-mix(in srgb, ${color} 14%, transparent)`, color }}
+                        aria-hidden="true"
+                      >
+                        {cat?.name?.[0]?.toUpperCase() ?? "?"}
+                      </div>
+                      <span
+                        className={`absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-2 border-card flex items-center justify-center ${
+                          income ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"
+                        }`}
+                        aria-hidden="true"
+                      >
+                        {income ? <ArrowDownLeft className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
+                      </span>
                     </div>
-                    <div className="min-w-0">
-                      <div className="font-medium truncate">{cat?.name ?? "Uncategorized"}</div>
-                      <div className="text-xs text-muted-foreground truncate">
-                        {format(parseISO(t.date), "MMM d, yyyy")} · {t.payment_method ?? "—"}{t.note ? ` · ${t.note}` : ""}
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="font-medium truncate">{cat?.name ?? "Uncategorized"}</span>
+                        <span className="hidden sm:inline-flex shrink-0 rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                          {t.payment_method ?? "—"}
+                        </span>
+                      </div>
+                      <div className="mt-0.5 text-xs text-muted-foreground truncate">
+                        <span className="num">{format(parseISO(t.date), "MMM d, yyyy")}</span>
+                        <span className="sm:hidden"> · {t.payment_method ?? "—"}</span>
+                        {t.note ? <span> · {t.note}</span> : null}
                       </div>
                     </div>
-                  </div>
-                  <div className={`font-display font-semibold shrink-0 tabular-nums ${t.type === "income" ? "text-success" : "text-destructive"}`}>
-                    {t.type === "income" ? "+" : "-"}{formatCurrency(Number(t.amount), currency).replace("-", "")}
-                  </div>
-                  <div className="flex gap-1 shrink-0">
-                    <Button variant="ghost" size="icon" onClick={() => openEdit(t)} className="h-8 w-8 press" aria-label={`Edit ${cat?.name ?? "transaction"}`}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setPendingDelete(t)}
-                      className="h-8 w-8 press text-destructive hover:text-destructive"
-                      aria-label={`Delete ${cat?.name ?? "transaction"}`}
+
+                    <div
+                      className={`num font-display font-semibold text-sm sm:text-base shrink-0 tabular-nums ${
+                        income ? "text-success" : "text-destructive"
+                      }`}
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                      {income ? "+" : "−"}
+                      {formatCurrency(Number(t.amount), currency).replace("-", "")}
+                    </div>
+
+                    <div className="flex gap-0.5 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-within:opacity-100 interactive">
+                      <Button variant="ghost" size="icon" onClick={() => openEdit(t)} className="h-9 w-9 rounded-lg press" aria-label={`Edit ${cat?.name ?? "transaction"}`}>
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setPendingDelete(t)}
+                        className="h-9 w-9 rounded-lg press text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                        aria-label={`Delete ${cat?.name ?? "transaction"}`}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.li>
             );
           })}
-        </div>
+        </ul>
       )}
 
       <TransactionDialog open={dlgOpen} onOpenChange={setDlgOpen} editTx={edit} />

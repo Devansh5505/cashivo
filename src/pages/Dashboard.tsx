@@ -239,8 +239,14 @@ export default function Dashboard() {
 
         <Card className="flex flex-col rounded-3xl border-border/60 elev-2 card-hover">
           <CardHeader className="gap-1 pb-1">
-            <CardTitle className="section-title">Spending by category</CardTitle>
-            <p className="text-xs text-muted-foreground">{format(now, "MMMM yyyy")}</p>
+            <CardTitle className="section-title flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <PieChartIcon className="h-4 w-4" />
+              </span>
+              Spending by category
+            </CardTitle>
+            <p className="pl-9 text-xs text-muted-foreground">{format(now, "MMMM yyyy")}</p>
+
           </CardHeader>
           <CardContent className="flex flex-1 flex-col justify-between pt-3">
             {byCategory.length === 0 ? (

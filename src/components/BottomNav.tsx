@@ -21,11 +21,13 @@ export function BottomNav() {
               key={item.title}
               to={item.url}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 py-3 text-xs transition-colors",
+                "flex min-h-[56px] flex-col items-center justify-center gap-1 py-2.5 text-xs interactive",
                 active ? "text-primary" : "text-muted-foreground"
               )}
             >
-              <item.icon className={cn("h-5 w-5", active && "scale-110")} />
+              <span className={cn("flex h-8 w-14 items-center justify-center rounded-full interactive", active && "bg-accent")}>
+                <item.icon className="h-5 w-5" />
+              </span>
               <span className="text-[10px] font-medium">{item.title}</span>
             </NavLink>
           );

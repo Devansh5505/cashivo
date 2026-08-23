@@ -17,11 +17,12 @@ const NotFound = () => {
         <div className="mb-6 flex justify-center">
           <Logo size={44} showWordmark={false} />
         </div>
-        <h1 className="font-display text-5xl font-bold tracking-tight">404</h1>
-        <p className="mt-3 text-muted-foreground">
+        <p className="eyebrow">Page not found</p>
+        <h1 className="mt-2 font-display text-5xl font-bold tracking-tight">404</h1>
+        <p className="mt-3 text-sm text-muted-foreground">
           We couldn't find that page. It may have been moved or never existed.
         </p>
-        <Button asChild className="mt-6 rounded-xl press">
+        <Button asChild className="mt-6 h-11 rounded-xl px-6 press interactive">
           <Link to="/">Back to dashboard</Link>
         </Button>
       </div>

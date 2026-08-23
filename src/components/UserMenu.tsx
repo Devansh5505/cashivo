@@ -29,7 +29,7 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full">
+        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full press interactive">
           <Avatar className="h-8 w-8">
             <AvatarFallback className="bg-gradient-primary text-primary-foreground font-semibold text-xs">
               {initials}
@@ -37,16 +37,16 @@ export function UserMenu() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 rounded-xl">
+      <DropdownMenuContent align="end" className="w-56 rounded-2xl elev-3">
         <DropdownMenuLabel>
-          <div className="font-semibold">{name}</div>
+          <div className="truncate font-semibold">{name}</div>
           <div className="text-xs font-normal text-muted-foreground truncate">{user?.email}</div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate("/settings")} className="gap-2">
+        <DropdownMenuItem onClick={() => navigate("/settings")} className="h-10 gap-2 rounded-lg">
           <UserIcon className="h-4 w-4" /> Settings
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={signOut} className="gap-2 text-destructive focus:text-destructive">
+        <DropdownMenuItem onClick={signOut} className="h-10 gap-2 rounded-lg text-destructive focus:text-destructive">
           <LogOut className="h-4 w-4" /> Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

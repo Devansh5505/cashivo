@@ -75,7 +75,7 @@ export default function ResetPassword() {
           <h1 className="font-display text-3xl font-bold tracking-tight">Set a new password</h1>
         </div>
 
-        <Card className="rounded-3xl border-none shadow-elegant">
+        <Card className="rounded-3xl border-none elev-3">
           <CardHeader className="pb-3">
             <CardTitle className="font-display">Choose a new password</CardTitle>
             <CardDescription>Must be between 8 and 128 characters.</CardDescription>
@@ -84,7 +84,7 @@ export default function ResetPassword() {
             {ready && !valid ? (
               <div className="space-y-4 text-sm text-muted-foreground">
                 <p>This reset link is invalid or has expired. Request a new password reset email to continue.</p>
-                <Button className="w-full rounded-xl h-11 press" onClick={() => navigate("/auth", { replace: true })}>
+                <Button className="w-full rounded-xl h-11 press interactive" onClick={() => navigate("/auth", { replace: true })}>
                   Back to sign in
                 </Button>
               </div>
@@ -92,13 +92,13 @@ export default function ResetPassword() {
               <form onSubmit={submit} className="space-y-3">
                 <div className="space-y-2">
                   <Label htmlFor="new-pw">New password</Label>
-                  <Input id="new-pw" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl" />
+                  <Input id="new-pw" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl h-11" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirm-pw">Confirm password</Label>
-                  <Input id="confirm-pw" type="password" required minLength={8} value={confirm} onChange={(e) => setConfirm(e.target.value)} className="rounded-xl" />
+                  <Input id="confirm-pw" type="password" required minLength={8} value={confirm} onChange={(e) => setConfirm(e.target.value)} className="rounded-xl h-11" />
                 </div>
-                <Button type="submit" className="w-full rounded-xl h-11 press" disabled={busy || !ready}>
+                <Button type="submit" className="w-full rounded-xl h-11 press interactive" disabled={busy || !ready}>
                   {busy ? "Updating…" : "Update password"}
                 </Button>
               </form>

@@ -155,13 +155,13 @@ export default function Auth() {
           </div>
         </div>
 
-        <Card className="rounded-3xl border-none shadow-elegant">
+        <Card className="rounded-3xl border-none elev-3">
           <CardHeader className="pb-3">
             <CardTitle className="font-display">Get started</CardTitle>
             <CardDescription>Sign in or create your account</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full rounded-xl h-11 mb-4" onClick={google} disabled={busy}>
+            <Button variant="outline" className="w-full rounded-xl h-11 mb-4 press interactive" onClick={google} disabled={busy}>
               <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -177,15 +177,15 @@ export default function Auth() {
             </div>
 
             <Tabs defaultValue="signin">
-              <TabsList className="grid w-full grid-cols-2 rounded-xl">
-                <TabsTrigger value="signin" className="rounded-lg">Sign in</TabsTrigger>
-                <TabsTrigger value="signup" className="rounded-lg">Sign up</TabsTrigger>
+              <TabsList className="grid h-11 w-full grid-cols-2 rounded-xl">
+                <TabsTrigger value="signin" className="h-9 rounded-lg">Sign in</TabsTrigger>
+                <TabsTrigger value="signup" className="h-9 rounded-lg">Sign up</TabsTrigger>
               </TabsList>
               <TabsContent value="signin" className="mt-4">
                 <form onSubmit={signIn} className="space-y-3">
                   <div className="space-y-2">
                     <Label htmlFor="email-in">Email</Label>
-                    <Input id="email-in" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-xl" />
+                    <Input id="email-in" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-xl h-11" />
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -193,14 +193,14 @@ export default function Auth() {
                       <button
                         type="button"
                         onClick={() => { setResetEmail(email); setForgotOpen(true); }}
-                        className="text-xs font-medium text-primary hover:underline underline-offset-4 transition-colors"
+                        className="rounded-md px-1 py-1 text-xs font-medium text-primary hover:underline underline-offset-4 interactive"
                       >
                         Forgot password?
                       </button>
                     </div>
-                    <Input id="pw-in" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl" />
+                    <Input id="pw-in" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl h-11" />
                   </div>
-                  <Button type="submit" className="w-full rounded-xl h-11 press" disabled={busy}>Sign in</Button>
+                  <Button type="submit" className="w-full rounded-xl h-11 press interactive" disabled={busy}>Sign in</Button>
 
                 </form>
               </TabsContent>
@@ -208,17 +208,17 @@ export default function Auth() {
                 <form onSubmit={signUp} className="space-y-3">
                   <div className="space-y-2">
                     <Label htmlFor="name">Name</Label>
-                    <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} className="rounded-xl" placeholder="Your name" />
+                    <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} className="rounded-xl h-11" placeholder="Your name" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email-up">Email</Label>
-                    <Input id="email-up" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-xl" />
+                    <Input id="email-up" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-xl h-11" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="pw-up">Password</Label>
-                    <Input id="pw-up" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl" />
+                    <Input id="pw-up" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl h-11" />
                   </div>
-                  <Button type="submit" className="w-full rounded-xl h-11" disabled={busy}>Create account</Button>
+                  <Button type="submit" className="w-full rounded-xl h-11 press interactive" disabled={busy}>Create account</Button>
                 </form>
               </TabsContent>
             </Tabs>
@@ -227,7 +227,7 @@ export default function Auth() {
       </motion.div>
 
       <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
-        <DialogContent className="rounded-3xl sm:max-w-md">
+        <DialogContent className="rounded-2xl elev-3 sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="font-display">Reset your password</DialogTitle>
             <DialogDescription>
@@ -243,15 +243,15 @@ export default function Auth() {
                 required
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
-                className="rounded-xl"
+                className="rounded-xl h-11"
                 placeholder="you@example.com"
               />
             </div>
             <DialogFooter className="gap-2 sm:gap-2">
-              <Button type="button" variant="outline" className="rounded-xl press" onClick={() => setForgotOpen(false)}>
+              <Button type="button" variant="outline" className="rounded-xl h-11 press interactive" onClick={() => setForgotOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" className="rounded-xl press" disabled={resetBusy}>
+              <Button type="submit" className="rounded-xl h-11 press interactive" disabled={resetBusy}>
                 {resetBusy ? "Sending…" : "Send reset link"}
               </Button>
             </DialogFooter>

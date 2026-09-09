@@ -1,22 +1,9 @@
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-} from "recharts";
 import { ArrowDownRight, ArrowUpRight, Plus, TrendingUp, Wallet, PiggyBank, ChevronRight, PieChart as PieChartIcon } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useCategories } from "@/hooks/useCategories";
@@ -31,6 +18,12 @@ import {
   format,
   subMonths,
 } from "date-fns";
+
+// Recharts is the single largest dependency; keeping it out of the initial
+// bundle lets the dashboard shell paint first. Behaviour is unchanged.
+const CashFlowChart = lazy(() => import("@/components/dashboard/CashFlowChart"));
+const CategoryPieChart = lazy(() => import("@/components/dashboard/CategoryPieChart"));
+
 
 export default function Dashboard() {
   const { data: transactions = [], isLoading } = useTransactions();
@@ -126,14 +119,6 @@ export default function Dashboard() {
   }
 
 
-  const tooltipStyle = {
-    borderRadius: 14,
-    border: "1px solid hsl(var(--border))",
-    background: "hsl(var(--card))",
-    color: "hsl(var(--card-foreground))",
-    boxShadow: "var(--shadow-md)",
-    fontSize: 12,
-  } as const;
 
   return (
     <motion.div
@@ -209,31 +194,10 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="pt-3">
 
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={cashFlow} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="cf-income" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--success))" stopOpacity={0.28} />
-                    <stop offset="100%" stopColor="hsl(var(--success))" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="cf-expense" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--destructive))" stopOpacity={0.22} />
-                    <stop offset="100%" stopColor="hsl(var(--destructive))" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 6" stroke="hsl(var(--border))" vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} dy={8} />
-                <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={58} tickFormatter={(v: number) => formatCompact(v, currency)} />
-                <Tooltip
-                  cursor={{ stroke: "hsl(var(--border))", strokeWidth: 1 }}
-                  contentStyle={tooltipStyle}
-                  formatter={(v: number) => formatCurrency(v, currency)}
-                />
-                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 12 }} iconType="circle" iconSize={8} />
-                <Area type="monotone" dataKey="income" stroke="hsl(var(--success))" strokeWidth={2.5} fill="url(#cf-income)" activeDot={{ r: 5 }} />
-                <Area type="monotone" dataKey="expense" stroke="hsl(var(--destructive))" strokeWidth={2.5} fill="url(#cf-expense)" activeDot={{ r: 5 }} />
-              </AreaChart>
-            </ResponsiveContainer>
+            <Suspense fallback={<Skeleton className="h-[300px] w-full rounded-2xl" />}>
+              <CashFlowChart data={cashFlow} currency={currency} />
+            </Suspense>
+
           </CardContent>
         </Card>
 
@@ -254,14 +218,10 @@ export default function Dashboard() {
             ) : (
               <>
                 <div className="relative">
-                  <ResponsiveContainer width="100%" height={200}>
-                    <PieChart>
-                      <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={66} outerRadius={92} paddingAngle={3} cornerRadius={6} stroke="hsl(var(--card))" strokeWidth={2}>
-                        {byCategory.map((c, i) => <Cell key={i} fill={c.color} />)}
-                      </Pie>
-                      <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatCurrency(v, currency)} />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <Suspense fallback={<Skeleton className="h-[200px] w-full rounded-2xl" />}>
+                    <CategoryPieChart data={byCategory} currency={currency} />
+                  </Suspense>
+
                   <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
                     <span className="eyebrow text-[10px]">Total</span>
                     <span className="mt-0.5 font-display text-xl font-bold num">{formatCompact(categoryTotal, currency)}</span>

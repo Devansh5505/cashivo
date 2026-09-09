@@ -119,14 +119,6 @@ export default function Dashboard() {
   }
 
 
-  const tooltipStyle = {
-    borderRadius: 14,
-    border: "1px solid hsl(var(--border))",
-    background: "hsl(var(--card))",
-    color: "hsl(var(--card-foreground))",
-    boxShadow: "var(--shadow-md)",
-    fontSize: 12,
-  } as const;
 
   return (
     <motion.div

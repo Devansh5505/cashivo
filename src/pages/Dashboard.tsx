@@ -247,14 +247,10 @@ export default function Dashboard() {
             ) : (
               <>
                 <div className="relative">
-                  <ResponsiveContainer width="100%" height={200}>
-                    <PieChart>
-                      <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={66} outerRadius={92} paddingAngle={3} cornerRadius={6} stroke="hsl(var(--card))" strokeWidth={2}>
-                        {byCategory.map((c, i) => <Cell key={i} fill={c.color} />)}
-                      </Pie>
-                      <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatCurrency(v, currency)} />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <Suspense fallback={<Skeleton className="h-[200px] w-full rounded-2xl" />}>
+                    <CategoryPieChart data={byCategory} currency={currency} />
+                  </Suspense>
+
                   <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
                     <span className="eyebrow text-[10px]">Total</span>
                     <span className="mt-0.5 font-display text-xl font-bold num">{formatCompact(categoryTotal, currency)}</span>

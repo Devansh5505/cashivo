@@ -1,22 +1,9 @@
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-} from "recharts";
 import { ArrowDownRight, ArrowUpRight, Plus, TrendingUp, Wallet, PiggyBank, ChevronRight, PieChart as PieChartIcon } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useCategories } from "@/hooks/useCategories";
@@ -31,6 +18,12 @@ import {
   format,
   subMonths,
 } from "date-fns";
+
+// Recharts is the single largest dependency; keeping it out of the initial
+// bundle lets the dashboard shell paint first. Behaviour is unchanged.
+const CashFlowChart = lazy(() => import("@/components/dashboard/CashFlowChart"));
+const CategoryPieChart = lazy(() => import("@/components/dashboard/CategoryPieChart"));
+
 
 export default function Dashboard() {
   const { data: transactions = [], isLoading } = useTransactions();

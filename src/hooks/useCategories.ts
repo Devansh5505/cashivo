@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuthUser } from "@/hooks/useAuthUser";
 
 export interface Category {
   id: string;
@@ -12,9 +13,12 @@ export interface Category {
   created_at: string;
 }
 
+/** Query key is scoped to the user id so custom categories never leak between accounts. */
 export function useCategories() {
+  const { user } = useAuthUser();
   return useQuery({
-    queryKey: ["categories"],
+    queryKey: ["categories", user?.id],
+    enabled: !!user,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")

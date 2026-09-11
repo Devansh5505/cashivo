@@ -171,7 +171,7 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
 
           <div className="space-y-2">
             <Label htmlFor="note" className="eyebrow">Note (optional)</Label>
-            <Textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} className="rounded-xl min-h-[80px] resize-none interactive" placeholder="What was this for?" />
+            <Textarea id="note" maxLength={500} value={note} onChange={(e) => setNote(e.target.value)} className="rounded-xl min-h-[80px] resize-none interactive" placeholder="What was this for?" />
           </div>
 
           <Button

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuthUser } from "@/hooks/useAuthUser";
 
 export interface Transaction {
   id: string;
@@ -23,9 +24,12 @@ export interface TransactionInput {
   payment_method?: string | null;
 }
 
+/** Query key is scoped to the user id so one account can never read another's cached rows. */
 export function useTransactions() {
+  const { user } = useAuthUser();
   return useQuery({
-    queryKey: ["transactions"],
+    queryKey: ["transactions", user?.id],
+    enabled: !!user,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("transactions")

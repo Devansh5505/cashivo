@@ -88,7 +88,7 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(o) => { if (!saving) onOpenChange(o); }}>
       <DialogContent className="rounded-2xl elev-3 sm:max-w-md">
         <DialogHeader className="space-y-1 text-left">
           <p className="eyebrow">{editTx ? "Update record" : "New record"}</p>
@@ -180,9 +180,9 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
           <Button
             type="submit"
             className="w-full rounded-xl h-12 press elev-2 bg-gradient-primary text-primary-foreground hover:opacity-95"
-            disabled={add.isPending || update.isPending}
+            disabled={saving}
           >
-            {add.isPending || update.isPending ? "Saving…" : editTx ? "Save changes" : "Save transaction"}
+            {saving ? "Saving…" : editTx ? "Save changes" : "Save transaction"}
           </Button>
         </form>
       </DialogContent>

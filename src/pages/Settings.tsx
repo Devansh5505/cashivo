@@ -35,7 +35,7 @@ const THEME_OPTIONS: { value: Theme; label: string; icon: typeof Sun }[] = [
 
 export default function Settings() {
   const { user } = useAuthUser();
-  const { data: profile, isLoading } = useProfile();
+  const { data: profile, isLoading, isError, error, refetch, isFetching } = useProfile();
   const update = useUpdateProfile();
   const navigate = useNavigate();
 
@@ -55,6 +55,7 @@ export default function Settings() {
   const onThemeChange = (value: string) => setTheme(value as Theme);
 
   const save = async () => {
+    if (update.isPending) return; // guard against double submits
     try {
       await update.mutateAsync({ display_name: name.trim() || null, currency, theme: theme ?? "system" });
       toast.success("Settings saved");

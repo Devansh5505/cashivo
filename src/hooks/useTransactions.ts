@@ -59,8 +59,11 @@ export function useUpdateTransaction() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...input }: TransactionInput & { id: string }) => {
-      const { error } = await supabase.from("transactions").update(input).eq("id", id);
+      // Returning the row confirms the update actually applied, so a no-op
+      // (already deleted elsewhere) never reports a false success.
+      const { data, error } = await supabase.from("transactions").update(input).eq("id", id).select("id");
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error("This transaction no longer exists. Refresh and try again.");
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["transactions"] }),
   });

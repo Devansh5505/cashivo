@@ -59,7 +59,7 @@ export function errorMessage(err: unknown, fallback = "Something went wrong. Ple
   }
 
   // Duplicate row.
-  if (code === "23505" || code === "23505".slice(0) || lower.includes("duplicate key")) {
+  if (code === "23505" || lower.includes("duplicate key")) {
     return "That already exists. Try a different name.";
   }
   if (code === "23514" || lower.includes("violates check constraint")) {

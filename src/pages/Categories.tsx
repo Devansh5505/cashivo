@@ -11,13 +11,14 @@ import { Plus, Trash2, Check, Tags, ArrowDownLeft, ArrowUpRight } from "lucide-r
 import { useCategories, useAddCategory, useDeleteCategory, type Category } from "@/hooks/useCategories";
 import { useTransactions } from "@/hooks/useTransactions";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { LoadError } from "@/components/LoadError";
 import { errorMessage } from "@/lib/errors";
 import { toast } from "sonner";
 
 const COLORS = ["#10b981", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899", "#f97316", "#f59e0b", "#ef4444", "#06b6d4", "#a855f7", "#64748b"];
 
 export default function Categories() {
-  const { data: categories = [], isLoading } = useCategories();
+  const { data: categories = [], isLoading, isError, error, refetch, isFetching } = useCategories();
   const { data: transactions = [] } = useTransactions();
   const add = useAddCategory();
   const del = useDeleteCategory();
@@ -50,6 +51,7 @@ export default function Categories() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (add.isPending) return; // guard against double submits
     const clean = name.trim();
     if (!clean) return toast.error("Please enter a category name.");
     if (clean.length > 40) return toast.error("Category name must be 40 characters or fewer.");
@@ -61,12 +63,13 @@ export default function Categories() {
       setOpen(false);
       setName("");
     } catch (e) {
+      // Dialog stays open with the typed values intact so the user can retry.
       toast.error(errorMessage(e, "Couldn't add this category."));
     }
   };
 
   const confirmDelete = async () => {
-    if (!pendingDelete) return;
+    if (!pendingDelete || del.isPending) return;
     try {
       await del.mutateAsync(pendingDelete.id);
       toast.success("Category deleted");
@@ -172,6 +175,8 @@ export default function Categories() {
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
           {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-[84px] w-full rounded-2xl" />)}
         </div>
+      ) : isError ? (
+        <LoadError what="your categories" error={error} onRetry={() => refetch()} retrying={isFetching} />
       ) : list.length === 0 ? (
         <Card className="rounded-2xl border-dashed border-border/70 surface-tint">
           <CardContent className="flex flex-col items-center justify-center gap-3 py-14 text-center">
@@ -242,7 +247,7 @@ export default function Categories() {
 
       <ConfirmDialog
         open={!!pendingDelete}
-        onOpenChange={(o) => !o && setPendingDelete(null)}
+        onOpenChange={(o) => { if (!o && !del.isPending) setPendingDelete(null); }}
         title={`Delete "${pendingDelete?.name ?? ""}"?`}
         description={
           pendingUsage > 0

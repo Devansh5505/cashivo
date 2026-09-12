@@ -10,6 +10,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useProfile } from "@/hooks/useProfile";
 import { formatCurrency, formatCompact } from "@/lib/format";
 import { TransactionDialog } from "@/components/TransactionDialog";
+import { LoadError } from "@/components/LoadError";
 import {
   startOfMonth,
   endOfMonth,
@@ -26,7 +27,7 @@ const CategoryPieChart = lazy(() => import("@/components/dashboard/CategoryPieCh
 
 
 export default function Dashboard() {
-  const { data: transactions = [], isLoading } = useTransactions();
+  const { data: transactions = [], isLoading, isError, error, refetch, isFetching } = useTransactions();
   const { data: categories = [] } = useCategories();
   const { data: profile } = useProfile();
   const [dlgOpen, setDlgOpen] = useState(false);
@@ -117,6 +118,21 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  // A failed load must never look like "you have no data".
+  if (isError) {
+    return (
+      <div className="space-y-7">
+        <header className="space-y-1">
+          <p className="eyebrow">Overview</p>
+          <h1 className="font-display text-2xl md:text-3xl font-bold tracking-[-0.02em]">Dashboard</h1>
+        </header>
+        <LoadError what="your dashboard" error={error} onRetry={() => refetch()} retrying={isFetching} />
+      </div>
+    );
+  }
+
+
 
 
 

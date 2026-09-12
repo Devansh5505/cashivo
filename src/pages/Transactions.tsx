@@ -14,12 +14,13 @@ import { formatCurrency } from "@/lib/format";
 import { errorMessage } from "@/lib/errors";
 import { TransactionDialog } from "@/components/TransactionDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { LoadError } from "@/components/LoadError";
 import { toast } from "sonner";
 
 const PAYMENT_METHODS = ["Cash", "Card", "UPI", "Bank Transfer", "Wallet", "Other"];
 
 export default function Transactions() {
-  const { data: transactions = [], isLoading } = useTransactions();
+  const { data: transactions = [], isLoading, isError, error, refetch, isFetching } = useTransactions();
   const { data: categories = [] } = useCategories();
   const { data: profile } = useProfile();
   const del = useDeleteTransaction();
@@ -71,12 +72,13 @@ export default function Transactions() {
   }, [transactions, categoryById, search, typeFilter, catFilter, payFilter, from, to, minAmt, maxAmt]);
 
   const confirmDelete = async () => {
-    if (!pendingDelete) return;
+    if (!pendingDelete || del.isPending) return; // guard against double submits
     try {
       await del.mutateAsync(pendingDelete.id);
       toast.success("Transaction deleted");
       setPendingDelete(null);
     } catch (e) {
+      // Keep the dialog open and usable so the user can retry or cancel.
       toast.error(errorMessage(e, "Couldn't delete this transaction."));
     }
   };
@@ -194,6 +196,8 @@ export default function Transactions() {
             </Card>
           ))}
         </div>
+      ) : isError ? (
+        <LoadError what="your transactions" error={error} onRetry={() => refetch()} retrying={isFetching} />
       ) : filtered.length === 0 ? (
         <Card className="rounded-2xl border-border/70 elev-1 surface-tint">
           <CardContent className="py-16 text-center flex flex-col items-center gap-4">
@@ -306,7 +310,7 @@ export default function Transactions() {
 
       <ConfirmDialog
         open={!!pendingDelete}
-        onOpenChange={(o) => !o && setPendingDelete(null)}
+        onOpenChange={(o) => { if (!o && !del.isPending) setPendingDelete(null); }}
         title="Delete this transaction?"
         description={
           pendingDelete

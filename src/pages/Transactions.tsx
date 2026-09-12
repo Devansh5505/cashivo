@@ -19,7 +19,7 @@ import { toast } from "sonner";
 const PAYMENT_METHODS = ["Cash", "Card", "UPI", "Bank Transfer", "Wallet", "Other"];
 
 export default function Transactions() {
-  const { data: transactions = [], isLoading } = useTransactions();
+  const { data: transactions = [], isLoading, isError, error, refetch, isFetching } = useTransactions();
   const { data: categories = [] } = useCategories();
   const { data: profile } = useProfile();
   const del = useDeleteTransaction();
@@ -71,12 +71,13 @@ export default function Transactions() {
   }, [transactions, categoryById, search, typeFilter, catFilter, payFilter, from, to, minAmt, maxAmt]);
 
   const confirmDelete = async () => {
-    if (!pendingDelete) return;
+    if (!pendingDelete || del.isPending) return; // guard against double submits
     try {
       await del.mutateAsync(pendingDelete.id);
       toast.success("Transaction deleted");
       setPendingDelete(null);
     } catch (e) {
+      // Keep the dialog open and usable so the user can retry or cancel.
       toast.error(errorMessage(e, "Couldn't delete this transaction."));
     }
   };

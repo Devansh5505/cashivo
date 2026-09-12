@@ -55,8 +55,11 @@ export function TransactionDialog({ open, onOpenChange, editTx, defaultType = "e
 
   const filteredCats = useMemo(() => categories.filter((c) => c.type === type), [categories, type]);
 
+  const saving = add.isPending || update.isPending;
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (saving) return; // guard against double submits (Enter key, double click)
     const parsed = parseFloat(amount);
     if (isNaN(parsed) || parsed <= 0) return toast.error("Enter an amount greater than zero.");
     if (parsed > 1_000_000_000) return toast.error("That amount is too large.");

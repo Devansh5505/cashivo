@@ -10,6 +10,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useProfile } from "@/hooks/useProfile";
 import { formatCurrency, formatCompact } from "@/lib/format";
 import { TransactionDialog } from "@/components/TransactionDialog";
+import { LoadError } from "@/components/LoadError";
 import {
   startOfMonth,
   endOfMonth,

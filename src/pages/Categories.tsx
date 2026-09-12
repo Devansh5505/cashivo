@@ -175,6 +175,8 @@ export default function Categories() {
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
           {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-[84px] w-full rounded-2xl" />)}
         </div>
+      ) : isError ? (
+        <LoadError what="your categories" error={error} onRetry={() => refetch()} retrying={isFetching} />
       ) : list.length === 0 ? (
         <Card className="rounded-2xl border-dashed border-border/70 surface-tint">
           <CardContent className="flex flex-col items-center justify-center gap-3 py-14 text-center">
@@ -245,7 +247,7 @@ export default function Categories() {
 
       <ConfirmDialog
         open={!!pendingDelete}
-        onOpenChange={(o) => !o && setPendingDelete(null)}
+        onOpenChange={(o) => { if (!o && !del.isPending) setPendingDelete(null); }}
         title={`Delete "${pendingDelete?.name ?? ""}"?`}
         description={
           pendingUsage > 0

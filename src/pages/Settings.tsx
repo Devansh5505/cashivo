@@ -236,6 +236,8 @@ export default function Settings() {
           {update.isPending ? "Saving…" : "Save changes"}
         </Button>
       </div>
+        </>
+      )}
 
       {/* Account actions */}
       <Card className="rounded-2xl border-border/70 elev-1">

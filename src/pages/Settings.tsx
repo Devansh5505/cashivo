@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { Check, Coins, LogOut, Mail, Monitor, Moon, Palette, Sun, UserRound } from "lucide-react";
 import { useTheme, type Theme } from "@/components/ThemeProvider";
 import { errorMessage } from "@/lib/errors";
+import { LoadError } from "@/components/LoadError";
 import { toast } from "sonner";
 
 const CURRENCIES = [
@@ -100,6 +101,11 @@ export default function Settings() {
         <p className="text-sm text-muted-foreground">Manage your Cashivo profile, currency and appearance.</p>
       </header>
 
+      {/* A failed load must never look like an empty profile. */}
+      {isError ? (
+        <LoadError what="your settings" error={error} onRetry={() => refetch()} retrying={isFetching} />
+      ) : (
+        <>
       {/* Profile identity */}
       <Card className="rounded-2xl border-border/70 elev-2 surface-tint overflow-hidden">
         <div className="h-1 w-full bg-gradient-primary" aria-hidden />

@@ -19,7 +19,11 @@ const COLORS = ["#10b981", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899", "#f97316"
 
 export default function Categories() {
   const { data: categories = [], isLoading, isError, error, refetch, isFetching } = useCategories();
-  const { data: transactions = [] } = useTransactions();
+  const {
+    data: transactions = [],
+    isLoading: transactionsLoading,
+    isError: transactionsError,
+  } = useTransactions();
   const add = useAddCategory();
   const del = useDeleteCategory();
 
@@ -79,7 +83,9 @@ export default function Categories() {
     }
   };
 
-  const pendingUsage = pendingDelete ? usageById.get(pendingDelete.id) ?? 0 : 0;
+  const pendingUsage = pendingDelete && !transactionsLoading && !transactionsError
+    ? usageById.get(pendingDelete.id) ?? 0
+    : null;
 
   const tabs: { value: "expense" | "income"; label: string; count: number; Icon: typeof ArrowUpRight }[] = [
     { value: "expense", label: "Expense", count: counts.expense, Icon: ArrowDownLeft },
@@ -221,7 +227,13 @@ export default function Categories() {
                             {c.is_default ? "Default" : "Custom"}
                           </span>
                           <span className="num text-xs text-muted-foreground">
-                            {used > 0 ? `${used} transaction${used > 1 ? "s" : ""}` : "Unused"}
+                            {transactionsLoading
+                              ? "Checking…"
+                              : transactionsError
+                                ? "Unavailable"
+                                : used > 0
+                                  ? `${used} transaction${used > 1 ? "s" : ""}`
+                                  : "Unused"}
                           </span>
                         </div>
                       </div>
@@ -250,7 +262,9 @@ export default function Categories() {
         onOpenChange={(o) => { if (!o && !del.isPending) setPendingDelete(null); }}
         title={`Delete "${pendingDelete?.name ?? ""}"?`}
         description={
-          pendingUsage > 0
+          pendingUsage === null
+            ? "Transaction usage couldn't be confirmed. Your transactions and their amounts will be kept; linked transactions will show as Uncategorized."
+            : pendingUsage > 0
             ? `${pendingUsage} transaction${pendingUsage > 1 ? "s use" : " uses"} this category. Your transactions and their amounts are kept — they'll simply show as "Uncategorized".`
             : "This category isn't used by any transaction yet."
         }

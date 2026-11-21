@@ -51,6 +51,11 @@ export function useDeleteCategory() {
       const { error } = await supabase.from("categories").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["categories"] }),
+    onSuccess: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["categories"] }),
+        qc.invalidateQueries({ queryKey: ["transactions"] }),
+      ]);
+    },
   });
 }
